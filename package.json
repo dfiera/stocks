@@ -1,0 +1,9 @@
+{
+  "name": "stocks",
+  "packageManager": "pnpm@9.10.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
