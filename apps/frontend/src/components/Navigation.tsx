@@ -3,7 +3,7 @@ import { RiBankLine, RiStockLine } from '@remixicon/react'
 
 export default function Navigation() {
   return (
-    <TabNavigation className="flex justify-end my-10">
+    <TabNavigation className="flex justify-end my-8">
       <TabNavigationLink href="/markets" active className="inline-flex gap-2">
         <RiBankLine className="size-4" aria-hidden="true" />
         Markets

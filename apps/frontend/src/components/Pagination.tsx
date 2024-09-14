@@ -33,7 +33,7 @@ const data = [
 
 export default function Pagination() {
   return (
-    <div className="flex justify-end items-center text-sm text-white">
+    <div className="flex justify-end items-center text-sm dark:text-white">
       <Label htmlFor="rows-per-page" className="min-w-fit">Rows per page:</Label>
       <Select defaultValue={data[0].value}>
         <SelectTrigger id="rows-per-page" className="ml-2 max-w-fit">
