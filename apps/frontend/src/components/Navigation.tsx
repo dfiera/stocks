@@ -1,17 +1,23 @@
-import { TabNavigation, TabNavigationLink } from './TabNavigation.tsx'
-import { RiBankLine, RiStockLine } from '@remixicon/react'
+import * as NavigationMenuPrimitives from '@radix-ui/react-navigation-menu'
+import { Link } from '@tanstack/react-router'
+// import { RiBankLine, RiStockLine } from '@remixicon/react'
+import { TabNavigation } from './TabNavigation.tsx'
 
 export default function Navigation() {
   return (
-    <TabNavigation className="flex justify-end my-8">
-      <TabNavigationLink href="/markets" active className="inline-flex gap-2">
-        <RiBankLine className="size-4" aria-hidden="true" />
-        Markets
-      </TabNavigationLink>
-      <TabNavigationLink href="/screener" className="inline-flex gap-2">
-        <RiStockLine className="-ml-1 size-4" aria-hidden="true" />
-        Screener
-      </TabNavigationLink>
+    <TabNavigation className="flex justify-end gap-4 my-8 text-white">
+      <NavigationMenuPrimitives.Item>
+        <Link to="/markets">
+          {/*<RiBankLine className="size-4" aria-hidden="true" />*/}
+          Markets
+        </Link>
+      </NavigationMenuPrimitives.Item>
+      <NavigationMenuPrimitives.Item>
+        <Link to="/screener">
+          {/*<RiStockLine className="-ml-1 size-4" aria-hidden="true" />*/}
+          Screener
+        </Link>
+      </NavigationMenuPrimitives.Item>
     </TabNavigation>
   )
 }

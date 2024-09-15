@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import type { Config } from 'tailwindcss'
+import formsPlugin from '@tailwindcss/forms'
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -80,5 +81,5 @@ export default {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [formsPlugin],
 } satisfies Config;

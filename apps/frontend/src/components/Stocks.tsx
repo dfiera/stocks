@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { Card } from './Card.tsx'
 import {
   TableRoot,
@@ -110,7 +111,7 @@ export default function Stocks() {
         <Table className="border-b-0">
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Symbol</TableHeaderCell>
+              <TableHeaderCell>Ticker</TableHeaderCell>
               <TableHeaderCell>Company</TableHeaderCell>
               <TableHeaderCell>P/E</TableHeaderCell>
               <TableHeaderCell>Price</TableHeaderCell>
@@ -124,7 +125,11 @@ export default function Stocks() {
           <TableBody>
             {data.map((item) => (
               <TableRow key={id++}>
-                <TableCell>{item.symbol}</TableCell>
+                <TableCell>
+                  <Link to={`/stocks/${item.symbol}`}>
+                    {item.symbol}
+                  </Link>
+                </TableCell>
                 <TableCell>{item.company}</TableCell>
                 <TableCell>{item.pe}</TableCell>
                 <TableCell>{item.price}</TableCell>

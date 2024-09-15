@@ -38,6 +38,7 @@ export default function Watchlist() {
                   179.26
                 </span>
                 <span className="rounded bg-emerald-500 px-2 py-1 text-sm font-medium text-white">
+                  {/* This should be Volume (shares traded) and not market cap */}
                   3.1T
                 </span>
               </div>

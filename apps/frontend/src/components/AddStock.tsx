@@ -2,7 +2,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
