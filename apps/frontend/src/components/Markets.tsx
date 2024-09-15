@@ -6,8 +6,9 @@ export default function Markets() {
     <>
       <div className="grid grid-cols-3 gap-4">
         <Watchlist />
+        <Card className="dark:text-white">Market News and Sentiment </Card>
         <Card className="dark:text-white">Top Gainers, Losers, and Most Actively Traded Tickers</Card>
-        <Card className="dark:text-white">WIP</Card>
+
         <Card className="dark:text-white col-span-3">WIP</Card>
       </div>
     </>

@@ -71,8 +71,65 @@ const sortData = [
   },
 ]
 
+interface DataItem {
+  date: string
+  revenue: number
+}
+
+const areaChartData: DataItem[] = [
+  {
+    date: "Jan 23",
+    revenue: 2340,
+  },
+  {
+    date: "Feb 23",
+    revenue: 3110,
+  },
+  {
+    date: "Mar 23",
+    revenue: 4643,
+  },
+  {
+    date: "Apr 23",
+    revenue: 4650,
+  },
+  {
+    date: "May 23",
+    revenue: 3980,
+  },
+  {
+    date: "Jun 23",
+    revenue: 4702,
+  },
+  {
+    date: "Jul 23",
+    revenue: 5990,
+  },
+  {
+    date: "Aug 23",
+    revenue: 5700,
+  },
+  {
+    date: "Sep 23",
+    revenue: 4250,
+  },
+  {
+    date: "Oct 23",
+    revenue: 4182,
+  },
+  {
+    date: "Nov 23",
+    revenue: 3812,
+  },
+  {
+    date: "Dec 23",
+    revenue: 4900,
+  },
+]
+
 export {
   chartData,
   symbols,
-  sortData
+  sortData,
+  areaChartData
 }
