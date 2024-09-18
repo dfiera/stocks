@@ -111,15 +111,15 @@ export default function Stocks() {
         <Table className="border-b-0">
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Ticker</TableHeaderCell>
+              <TableHeaderCell>Symbol</TableHeaderCell>
               <TableHeaderCell>Company</TableHeaderCell>
-              <TableHeaderCell>P/E</TableHeaderCell>
               <TableHeaderCell>Price</TableHeaderCell>
               <TableHeaderCell>Change</TableHeaderCell>
               <TableHeaderCell>% Change</TableHeaderCell>
               <TableHeaderCell>Volume</TableHeaderCell>
-              <TableHeaderCell>Avg Volume</TableHeaderCell>
+              <TableHeaderCell>P/E</TableHeaderCell>
               <TableHeaderCell>Market Cap</TableHeaderCell>
+              <TableHeaderCell>EPS</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -1,11 +1,11 @@
-import Watchlist from './Watchlist.tsx'
+import Portfolio from './Portfolio.tsx'
 import { Card } from './Card.tsx'
 
 export default function Markets() {
   return (
     <>
       <div className="grid grid-cols-3 gap-4">
-        <Watchlist />
+        <Portfolio />
         <Card className="dark:text-white">Market News and Sentiment </Card>
         <Card className="dark:text-white">Top Gainers, Losers, and Most Actively Traded Tickers</Card>
 

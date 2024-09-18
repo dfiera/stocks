@@ -5,13 +5,13 @@ import { symbols, chartData } from '../stubs'
 
 let id = 0
 
-export default function Watchlist() {
+export default function Portfolio() {
   return (
     <>
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-3xl font-bold dark:text-white">
-            Watchlist
+            Portfolio
           </h1>
           <AddStock />
         </div>
