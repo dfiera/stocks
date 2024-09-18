@@ -1,6 +1,6 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-import Screener from '../components/Screener.tsx'
+import Markets from '../components/Markets.tsx'
 
 export const Route = createLazyFileRoute('/')({
-  component: Screener
+  component: Markets
 })

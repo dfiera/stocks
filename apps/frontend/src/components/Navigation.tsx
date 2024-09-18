@@ -13,7 +13,7 @@ export default function Navigation() {
       {/*  </Link>*/}
       {/*</NavigationMenuPrimitives.Item>*/}
       <NavigationMenuPrimitives.Item>
-        <Link to="/">
+        <Link to="/screener">
           {/*<RiStockLine className="-ml-1 size-4" aria-hidden="true" />*/}
           Screener
         </Link>

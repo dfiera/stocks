@@ -40,14 +40,14 @@ function Sort() {
   )
 }
 
-export default function Screener() {
+export default function Screener({ data }) {
   return (
     <>
       <div className="flex flex-col gap-5 sm:flex-row">
         <Sort />
         <Search />
       </div>
-      <Stocks />
+      <Stocks data={data} />
       <Pagination />
     </>
   )

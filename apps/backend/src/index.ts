@@ -22,7 +22,7 @@ interface Quote {
   exchange: string;
   price: number;
   change: number;
-  changePercentage: number;
+  changesPercentage: number;
   open: number;
   dayHigh: number;
   dayLow: number;
@@ -39,12 +39,52 @@ interface Quote {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS - needed in order to fetch data from client.
+// Only allowing requests from client and GET requests for now as no other methods are implemented.
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 app.get('/', (req: Request, res: Response) => {
   res.status(200).send('Hello from the server');
 });
 
-app.get('/screener', (req: Request, res: Response) => {
+app.get('/screener', async (req: Request, res: Response) => {
+  const ticker = 'AAPL'
 
+  const fetchQuote = async (ticker: string): Promise<Quote> => {
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=`);
+    const data = await response.json() as Quote[];
+
+    return data[0] as Quote;
+  };
+
+  const quote = await fetchQuote(ticker);
+
+  res.status(200).send([
+    {
+      symbol: quote.symbol,
+      name: quote.name,
+      exchange: quote.exchange,
+      price: quote.price,
+      change: quote.change,
+      changePercentage: quote.changesPercentage,
+      open: quote.open,
+      high: quote.dayHigh,
+      low: quote.dayLow,
+      previousClose: quote.previousClose,
+      yearHigh: quote.yearHigh,
+      yearLow: quote.yearLow,
+      volume: quote.volume,
+      avgVolume: quote.avgVolume,
+      pe: quote.pe,
+      marketCap: quote.marketCap,
+      eps: quote.eps
+    }
+  ]);
 });
 
 app.get('/tickers/:ticker', (req: Request, res: Response) => {
@@ -55,14 +95,14 @@ app.get('/overview/:ticker', async (req: Request, res: Response) => {
   const ticker = req.params.ticker;
 
   const fetchCompanyOverview = async (ticker: string): Promise<CompanyOverview> => {
-    const response = await fetch(`https://financialmodelingprep.com/api/v3/profile/${ticker}`);
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/profile/${ticker}?apikey=`);
     const data =  await response.json() as CompanyOverview[];
 
     return data[0] as CompanyOverview;
   };
 
   const fetchQuote = async (ticker: string): Promise<Quote> => {
-    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}`);
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=`);
     const data = await response.json() as Quote[];
 
     return data[0] as Quote;
@@ -92,7 +132,7 @@ app.get('/overview/:ticker', async (req: Request, res: Response) => {
       exchange: quote.exchange,
       price: quote.price,
       change: quote.change,
-      changePercentage: quote.changePercentage,
+      changePercentage: quote.changesPercentage,
       open: quote.open,
       high: quote.dayHigh,
       low: quote.dayLow,
@@ -108,10 +148,10 @@ app.get('/overview/:ticker', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/tickers/:ticker/news', async (req: Request, res: Response) => {
+app.get('/news/:ticker', async (req: Request, res: Response) => {
   const ticker = req.params.ticker;
 
-  const response = await fetch(`https://api.polygon.io/v2/reference/news?ticker=${ticker}&order=desc&limit=10&sort=published_utc`);
+  const response = await fetch(`https://api.polygon.io/v2/reference/news?ticker=${ticker}&order=desc&limit=10&sort=published_utc&apiKey=`);
   const data = await response.json();
 
   res.status(200).send(data);
