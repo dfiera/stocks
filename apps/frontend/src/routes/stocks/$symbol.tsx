@@ -1,22 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { stockQueryOptions } from '../../queryOptions.ts'
 import Stock from '../../components/Stock.tsx'
 
-const fetchStockData = async (symbol: string) => {
-  const response = await fetch(`http://localhost:3000/overview/${symbol}`)
-  return await response.json()
-}
-
 export const Route = createFileRoute('/stocks/$symbol')({
-  loader: async ({ params }) => {
-    return fetchStockData(params.symbol)
+  loader: ({ context: { queryClient }, params: { symbol } }) => {
+    return queryClient.ensureQueryData(stockQueryOptions(symbol))
   },
-  component: StockData,
+  component: Stock,
 })
-
-function StockData() {
-  const loaderData = Route.useLoaderData()
-
-  return (
-    <Stock data={loaderData} />
-  )
-}

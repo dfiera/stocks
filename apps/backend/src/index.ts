@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, {Request, Response} from 'express';
 
 interface CompanyOverview {
   symbol: string;
@@ -36,6 +36,30 @@ interface Quote {
   eps: number;
 }
 
+interface MetaObject {
+  symbol: string;
+  interval: string;
+  currency: string;
+  exchange_timezone: string;
+  exchange: string;
+  mic_code: string;
+  type: string;
+}
+
+interface OHLC {
+  datetime: string;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+}
+
+interface TimeSeries {
+  meta: MetaObject;
+  values: OHLC[]
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -56,7 +80,7 @@ app.get('/screener', async (req: Request, res: Response) => {
   const ticker = 'AAPL'
 
   const fetchQuote = async (ticker: string): Promise<Quote> => {
-    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=`);
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=${process.env.FMP_API_KEY}`);
     const data = await response.json() as Quote[];
 
     return data[0] as Quote;
@@ -87,28 +111,33 @@ app.get('/screener', async (req: Request, res: Response) => {
   ]);
 });
 
-app.get('/tickers/:ticker', (req: Request, res: Response) => {
-
-});
-
-app.get('/overview/:ticker', async (req: Request, res: Response) => {
+app.get('/tickers/:ticker', async (req: Request, res: Response) => {
   const ticker = req.params.ticker;
 
-  const fetchCompanyOverview = async (ticker: string): Promise<CompanyOverview> => {
-    const response = await fetch(`https://financialmodelingprep.com/api/v3/profile/${ticker}?apikey=`);
+  const response = await fetch(`https://api.twelvedata.com/time_series?symbol=${ticker}&interval=1min&order=asc&outputsize=390&apikey=${process.env.TD_API_KEY}`);
+  const timeSeries = await response.json() as TimeSeries;
+
+  res.status(200).send(timeSeries);
+});
+
+app.get('/overview/:symbol', async (req: Request, res: Response) => {
+  const symbol = req.params.symbol;
+
+  const fetchCompanyOverview = async (symbol: string): Promise<CompanyOverview> => {
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/profile/${symbol}?apikey=${process.env.FMP_API_KEY}`);
     const data =  await response.json() as CompanyOverview[];
 
     return data[0] as CompanyOverview;
   };
 
-  const fetchQuote = async (ticker: string): Promise<Quote> => {
-    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=`);
+  const fetchQuote = async (symbol: string): Promise<Quote> => {
+    const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${process.env.FMP_API_KEY}`);
     const data = await response.json() as Quote[];
 
     return data[0] as Quote;
   };
 
-  const [companyOverview, quote] = await Promise.all([fetchCompanyOverview(ticker), fetchQuote(ticker)]);
+  const [companyOverview, quote] = await Promise.all([fetchCompanyOverview(symbol), fetchQuote(symbol)]);
 
   res.status(200).send({
     overview: {
@@ -148,7 +177,7 @@ app.get('/overview/:ticker', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/news/:ticker', async (req: Request, res: Response) => {
+app.get('/news/:symbol', async (req: Request, res: Response) => {
   const ticker = req.params.ticker;
 
   const response = await fetch(`https://api.polygon.io/v2/reference/news?ticker=${ticker}&order=desc&limit=10&sort=published_utc&apiKey=`);

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   Select,
   SelectContent,
@@ -11,6 +12,8 @@ import Search from './Search.tsx'
 import Stocks from './Stocks.tsx'
 import Pagination from './Pagination.tsx'
 import { sortData } from '../stubs'
+import { screenerQueryOptions } from '../queryOptions.ts';
+import type { Screener } from '../types.ts';
 
 function Sort() {
   const [value, setValue] = useState('')
@@ -40,7 +43,10 @@ function Sort() {
   )
 }
 
-export default function Screener({ data }) {
+export default function Screener() {
+  const screenerQuery = useSuspenseQuery(screenerQueryOptions)
+  const data = screenerQuery.data as Screener[]
+
   return (
     <>
       <div className="flex flex-col gap-5 sm:flex-row">

@@ -13,25 +13,25 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ScreenerImport } from './routes/screener'
 import { Route as StocksSymbolImport } from './routes/stocks/$symbol'
 
 // Create Virtual Routes
 
-const ScreenerLazyImport = createFileRoute('/screener')()
 const MarketsLazyImport = createFileRoute('/markets')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
-const ScreenerLazyRoute = ScreenerLazyImport.update({
-  path: '/screener',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/screener.lazy').then((d) => d.Route))
-
 const MarketsLazyRoute = MarketsLazyImport.update({
   path: '/markets',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/markets.lazy').then((d) => d.Route))
+
+const ScreenerRoute = ScreenerImport.update({
+  path: '/screener',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -54,18 +54,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/screener': {
+      id: '/screener'
+      path: '/screener'
+      fullPath: '/screener'
+      preLoaderRoute: typeof ScreenerImport
+      parentRoute: typeof rootRoute
+    }
     '/markets': {
       id: '/markets'
       path: '/markets'
       fullPath: '/markets'
       preLoaderRoute: typeof MarketsLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/screener': {
-      id: '/screener'
-      path: '/screener'
-      fullPath: '/screener'
-      preLoaderRoute: typeof ScreenerLazyImport
       parentRoute: typeof rootRoute
     }
     '/stocks/$symbol': {
@@ -82,46 +82,46 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/screener': typeof ScreenerRoute
   '/markets': typeof MarketsLazyRoute
-  '/screener': typeof ScreenerLazyRoute
   '/stocks/$symbol': typeof StocksSymbolRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/screener': typeof ScreenerRoute
   '/markets': typeof MarketsLazyRoute
-  '/screener': typeof ScreenerLazyRoute
   '/stocks/$symbol': typeof StocksSymbolRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/screener': typeof ScreenerRoute
   '/markets': typeof MarketsLazyRoute
-  '/screener': typeof ScreenerLazyRoute
   '/stocks/$symbol': typeof StocksSymbolRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/markets' | '/screener' | '/stocks/$symbol'
+  fullPaths: '/' | '/screener' | '/markets' | '/stocks/$symbol'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/markets' | '/screener' | '/stocks/$symbol'
-  id: '__root__' | '/' | '/markets' | '/screener' | '/stocks/$symbol'
+  to: '/' | '/screener' | '/markets' | '/stocks/$symbol'
+  id: '__root__' | '/' | '/screener' | '/markets' | '/stocks/$symbol'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  ScreenerRoute: typeof ScreenerRoute
   MarketsLazyRoute: typeof MarketsLazyRoute
-  ScreenerLazyRoute: typeof ScreenerLazyRoute
   StocksSymbolRoute: typeof StocksSymbolRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  ScreenerRoute: ScreenerRoute,
   MarketsLazyRoute: MarketsLazyRoute,
-  ScreenerLazyRoute: ScreenerLazyRoute,
   StocksSymbolRoute: StocksSymbolRoute,
 }
 
@@ -138,19 +138,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/markets",
         "/screener",
+        "/markets",
         "/stocks/$symbol"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
+    "/screener": {
+      "filePath": "screener.tsx"
+    },
     "/markets": {
       "filePath": "markets.lazy.tsx"
-    },
-    "/screener": {
-      "filePath": "screener.lazy.tsx"
     },
     "/stocks/$symbol": {
       "filePath": "stocks/$symbol.tsx"

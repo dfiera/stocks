@@ -1,5 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Navigation from './components/Navigation.tsx'
 
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
         <Navigation/>
         <Outlet />
         <TanStackRouterDevtools />
+        <ReactQueryDevtools />
       </div>
     </>
   )

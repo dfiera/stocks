@@ -1,6 +1,9 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Card } from './Card.tsx'
 import { AreaChart } from './AreaChart.tsx'
-import type { Stock, Quote, CompanyOverview } from '../types.ts';
+import type { Quote, CompanyOverview } from '../types.ts'
+import { Route as StockRoute } from '../routes/stocks/$symbol.tsx'
+import { stockQueryOptions, tickerQueryOptions } from '../queryOptions.ts';
 
 let id = 0
 
@@ -55,8 +58,11 @@ const symbolInfo = [
   }
 ]
 
-export default function Stock({ data }: { data: Stock }) {
-  const { overview, quote } = data
+export default function Stock() {
+  const symbol = StockRoute.useParams().symbol
+  const { data: stockData } = useSuspenseQuery(stockQueryOptions(symbol))
+  const { data: tickerData } = useSuspenseQuery(tickerQueryOptions(symbol))
+  const { overview, quote } = stockData
 
   return (
     <>
@@ -73,49 +79,53 @@ export default function Stock({ data }: { data: Stock }) {
             <div className="space-x-1">
               <span className="font-semibold text-nowrap space-x-1">
                 <span className="text-xl font-bold dark:text-white">
-                  {quote.price}
+                  {quote.price.toFixed(2)}
                 </span>
                 <span className="text-emerald-500">
-                  {quote.change > 0 ? '+' : '-'}{quote.change} {`(${quote.price > 0 ? '+' : '-'}${quote.changePercentage}%)`}
+                  {quote.change > 0 ? '+' : '-'}{quote.change.toFixed(2)} {`(${quote.price > 0 ? '+' : '-'}${quote.changePercentage.toFixed(2)}%)`}
                 </span>
               </span>
             </div>
-            <div className="md:space-x-1 font-semibold break-words">
-              <span className="text-nowrap space-x-1">
-                <span>
-                  Pre-Market: $171.34
-                </span>
-                <span className="text-red-500">
-                  -1.23 (-0.4%)
-                </span>
-              </span>
-              <span className="hidden md:inline">·</span>
-              <span className="text-nowrap space-x-1">
-                <span>
-                  Post-Market: $171.34
-                </span>
-                <span className="text-red-500">
-                  -1.23 (-0.4%)
-                </span>
-              </span>
-            </div>
+            {/*<div className="md:space-x-1 font-semibold break-words">*/}
+            {/*  <span className="text-nowrap space-x-1">*/}
+            {/*    <span>*/}
+            {/*      Pre-Market: $171.34*/}
+            {/*    </span>*/}
+            {/*    <span className="text-red-500">*/}
+            {/*      -1.23 (-0.4%)*/}
+            {/*    </span>*/}
+            {/*  </span>*/}
+            {/*  <span className="hidden md:inline">·</span>*/}
+            {/*  <span className="text-nowrap space-x-1">*/}
+            {/*    <span>*/}
+            {/*      Post-Market: $171.34*/}
+            {/*    </span>*/}
+            {/*    <span className="text-red-500">*/}
+            {/*      -1.23 (-0.4%)*/}
+            {/*    </span>*/}
+            {/*  </span>*/}
+            {/*</div>*/}
           </div>
           <AreaChart
-            data={data}
-            index="date"
-            categories={['revenue']}
-            showLegend={false}
+            data={tickerData.values}
+            index="datetime"
+            categories={['close']}
+            colors={['emerald']}
+            valueFormatter={(number: number) =>
+              `$${Intl.NumberFormat('us', { maximumFractionDigits: 2 }).format(number)}`
+            }
             showXAxis={false}
             showYAxis={false}
             showGridLines={false}
-            colors={['emerald']}
+            showLegend={false}
+            autoMinValue={true}
           />
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 dark:text-gray-500">
             {
               symbolInfo.map((item) => (
                 <div key={id++} className="flex justify-between">
                   <span>{item.label}</span>
-                  <span className="dark:text-white">{quote[item.value as keyof Quote] || overview[item.value as keyof CompanyOverview]}</span>
+                  <span className="dark:text-white">{quote[item.value as keyof Quote]?.toLocaleString() || overview[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
                 </div>
               ))
             }
