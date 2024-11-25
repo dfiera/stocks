@@ -3,7 +3,7 @@ import { Card } from './Card.tsx'
 import { AreaChart } from './AreaChart.tsx'
 import type { Quote, CompanyOverview } from '../types.ts'
 import { Route as StockRoute } from '../routes/stocks/$symbol.tsx'
-import { stockQueryOptions, tickerQueryOptions } from '../queryOptions.ts';
+import { stockQueryOptions, priceChartQueryOptions, stockNewsQueryOptions } from '../api/queryOptions.ts';
 
 let id = 0
 
@@ -59,10 +59,10 @@ const symbolInfo = [
 ]
 
 export default function Stock() {
-  const symbol = StockRoute.useParams().symbol
+  const { symbol } = StockRoute.useParams();
   const { data: stockData } = useSuspenseQuery(stockQueryOptions(symbol))
-  const { data: tickerData } = useSuspenseQuery(tickerQueryOptions(symbol))
-  const { overview, quote } = stockData
+  const { data: priceChart } = useSuspenseQuery(priceChartQueryOptions(symbol))
+  const { data: newsArticles } = useSuspenseQuery(stockNewsQueryOptions(symbol))
 
   return (
     <>
@@ -70,19 +70,19 @@ export default function Stock() {
         <div className="w-11/12 mx-auto">
           <div className="dark:text-gray-500 mb-4">
             <div className="space-x-1">
-              <span className="text-xl font-bold dark:text-white">{overview.symbol}</span>
+              <span className="text-xl font-bold dark:text-white">{stockData.symbol}</span>
               <span className="font-semibold">·</span>
-              <span>{overview.name}</span>
+              <span>{stockData.companyName}</span>
               <span className="font-semibold">·</span>
-              <span>{overview.exchange}</span>
+              <span>{stockData.exchange}</span>
             </div>
             <div className="space-x-1">
               <span className="font-semibold text-nowrap space-x-1">
                 <span className="text-xl font-bold dark:text-white">
-                  {quote.price.toFixed(2)}
+                  {stockData.price.toFixed(2)}
                 </span>
                 <span className="text-emerald-500">
-                  {quote.change > 0 ? '+' : '-'}{quote.change.toFixed(2)} {`(${quote.price > 0 ? '+' : '-'}${quote.changePercentage.toFixed(2)}%)`}
+                  {stockData.change > 0 ? '+' : '-'}{stockData.change.toFixed(2)} {`(${stockData.price > 0 ? '+' : '-'}${stockData.changePercentage.toFixed(2)}%)`}
                 </span>
               </span>
             </div>
@@ -107,7 +107,7 @@ export default function Stock() {
             {/*</div>*/}
           </div>
           <AreaChart
-            data={tickerData.values}
+            data={priceChart.values}
             index="datetime"
             categories={['close']}
             colors={['emerald']}
@@ -125,36 +125,36 @@ export default function Stock() {
               symbolInfo.map((item) => (
                 <div key={id++} className="flex justify-between">
                   <span>{item.label}</span>
-                  <span className="dark:text-white">{quote[item.value as keyof Quote]?.toLocaleString() || overview[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
+                  <span className="dark:text-white">{stockData[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
                 </div>
               ))
             }
           </div>
           <Card className="flex gap-6 text-sm mt-6 p-10">
             <p className="w-9/12 text-pretty">
-              {overview.description}
+              {stockData.description}
             </p>
             <div className="text-gray-500">
               <div>
-                Sector: <span className="text-white">{overview.sector}</span>
+                Sector: <span className="text-white">{stockData.sector}</span>
               </div>
               <div>
-                Industry: <span className="text-white">{overview.industry}</span>
+                Industry: <span className="text-white">{stockData.industry}</span>
               </div>
               <div>
-                Country: <span className="text-white">{overview.country}</span>
+                Country: <span className="text-white">{stockData.country}</span>
               </div>
               <div>
-                Employees: <span className="text-white">{overview.employees}</span>
+                Employees: <span className="text-white">{stockData.employees}</span>
               </div>
               <div>
                 Website:
                 {' '}
                 <a
                   className="text-blue-600 hover:underline dark:text-blue-500"
-                  href={`${overview.website}`}
+                  href={`${stockData.website}`}
                 >
-                  {overview.website.slice(8)}
+                  {stockData.website.slice(8)}
                 </a>
               </div>
             </div>
@@ -163,57 +163,27 @@ export default function Stock() {
             Company News
           </h1>
           <Card className="grid grid-cols-2 gap-2 p-0 border-none">
-            <Card className="p-8">
-              <span className="font-thin">Reuters</span>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="font-bold w-4/5">Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola</p>
-                <img
-                  src="/vite.svg"
-                  width="64px"
-                  height="64px"
-                  alt="Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola"
-                />
-              </div>
-              <div className="flex text-gray-500 space-x-2">
-                <span>14 Sep 2024</span>
-                <span className="font-bold">·</span>
-                <span>John Doe</span>
-              </div>
-            </Card>
-            <Card className="p-8">
-              <span className="font-thin">Reuters</span>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="font-bold w-4/5">Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola</p>
-                <img
-                  src="/vite.svg"
-                  width="64px"
-                  height="64px"
-                  alt="Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola"
-                />
-              </div>
-              <div className="flex text-gray-500 space-x-2">
-                <span>14 Sep 2024</span>
-                <span className="font-bold">·</span>
-                <span>John Doe</span>
-              </div>
-            </Card>
-            <Card className="p-8">
-              <span className="font-thin">Reuters</span>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="font-bold w-4/5">Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola</p>
-                <img
-                  src="/vite.svg"
-                  width="64px"
-                  height="64px"
-                  alt="Prediction: This Stock Will Become Warren Buffett's Next Coca-Cola"
-                />
-              </div>
-              <div className="flex text-gray-500 space-x-2">
-                <span>14 Sep 2024</span>
-                <span className="font-bold">·</span>
-                <span>John Doe</span>
-              </div>
-            </Card>
+            {
+              newsArticles.map((article) => (
+                <Card key={article.id} className="p-8">
+                  <span className="font-thin">{article.publisher.name}</span>
+                  <div className="flex items-center gap-4 mb-2">
+                    <p className="font-bold w-4/5">{article.title}</p>
+                    <img
+                      src={article.image_url}
+                      width="64px"
+                      height="64px"
+                      alt={article.description}
+                    />
+                  </div>
+                  <div className="flex text-gray-500 space-x-2">
+                    <span>{article.published_utc}</span>
+                    <span className="font-bold">·</span>
+                    <span>{article.author}</span>
+                  </div>
+                </Card>
+              ))
+            }
           </Card>
         </div>
       </Card>
