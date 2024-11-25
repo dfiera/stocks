@@ -8,7 +8,7 @@ export interface MetaObject {
   type: string;
 }
 
-export interface OHLC {
+export interface OHLCPrice {
   datetime: string;
   open: string;
   high: string;
@@ -17,9 +17,9 @@ export interface OHLC {
   volume: string;
 }
 
-export interface TimeSeries {
+export interface PriceChart {
   meta: MetaObject;
-  values: OHLC[]
+  values: OHLCPrice[]
 }
 
 export interface CompanyProfile {

@@ -1,11 +1,11 @@
 
 export const fetchScreenerData = async () => {
-  const response = await fetch('http://localhost:3000/screener')
+  const response = await fetch('http://localhost:3000/api/screener')
   return await response.json()
 }
 
 export const fetchStockData = async (symbol: string) => {
-  const response = await fetch(`http://localhost:3000/overview/${symbol}`)
+  const response = await fetch(`http://localhost:3000/api/stocks/${symbol}`)
   return await response.json()
 }
 

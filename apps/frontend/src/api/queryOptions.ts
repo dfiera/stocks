@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query'
 import {
   fetchScreenerData,
   fetchStockData,
-  fetchTickerData
-} from './lib/data.ts'
+  fetchStockPriceChart
+} from './api/data.ts'
 
 export const screenerQueryOptions = queryOptions({
   queryKey: ['screener'],
@@ -15,7 +15,7 @@ export const stockQueryOptions = (symbol: string) => queryOptions({
   queryFn: () => fetchStockData(symbol)
 })
 
-export const tickerQueryOptions = (ticker: string) => queryOptions({
-  queryKey: ['ticker', { ticker }],
-  queryFn: () => fetchTickerData(ticker)
+export const stockPriceChartQueryOptions = (symbol: string) => queryOptions({
+  queryKey: ['priceChart', { symbol }],
+  queryFn: () => fetchStockPriceChart(symbol)
 })
