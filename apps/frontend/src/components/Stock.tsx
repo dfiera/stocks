@@ -179,8 +179,8 @@ export default function Stock() {
                     <p className="font-bold w-4/5">{article.title}</p>
                     <img
                       src={article.image_url}
-                      width="64px"
-                      height="64px"
+                      width="128px"
+                      height="128px"
                       alt={article.description}
                     />
                   </div>
