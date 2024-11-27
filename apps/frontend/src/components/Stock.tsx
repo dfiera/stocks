@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 import { Card } from './Card.tsx'
 import { AreaChart } from './AreaChart.tsx'
-import type { Quote, CompanyOverview } from '../types.ts'
+import type { Quote, CompanyOverview, NewsArticle } from '../types.ts'
 import { Route as StockRoute } from '../routes/stocks/$symbol.tsx'
 import { stockQueryOptions, priceChartQueryOptions, stockNewsQueryOptions } from '../api/queryOptions.ts';
 
@@ -60,9 +60,17 @@ const symbolInfo = [
 
 export default function Stock() {
   const { symbol } = StockRoute.useParams();
-  const { data: stockData } = useSuspenseQuery(stockQueryOptions(symbol))
-  const { data: priceChart } = useSuspenseQuery(priceChartQueryOptions(symbol))
-  const { data: newsArticles } = useSuspenseQuery(stockNewsQueryOptions(symbol))
+  const [
+    { data: stockData },
+    { data: priceChart },
+    { data: newsArticles }
+  ] =  useSuspenseQueries({
+    queries: [
+      stockQueryOptions(symbol),
+      priceChartQueryOptions(symbol),
+      stockNewsQueryOptions(symbol)
+    ]
+  });
 
   return (
     <>
@@ -164,7 +172,7 @@ export default function Stock() {
           </h1>
           <Card className="grid grid-cols-2 gap-2 p-0 border-none">
             {
-              newsArticles.map((article) => (
+              newsArticles.map((article: NewsArticle) => (
                 <Card key={article.id} className="p-8">
                   <span className="font-thin">{article.publisher.name}</span>
                   <div className="flex items-center gap-4 mb-2">

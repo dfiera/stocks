@@ -50,3 +50,16 @@ export interface Screener {
   marketCap: number;
   eps: number;
 }
+
+export interface NewsArticle {
+  id: string;
+  publisher: {
+    name: string;
+  };
+  title: string;
+  author: string;
+  published_utc: string;
+  article_url: string;
+  image_url: string;
+  description: string;
+}

@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { screenerQueryOptions } from '../api/queryOptions.ts'
-import Screener from '../components/Screener.tsx'
+import { createFileRoute } from '@tanstack/react-router';
+import { screenerQueryOptions } from '../api/queryOptions.ts';
+import Screener from '../components/Screener.tsx';
 
 export const Route = createFileRoute('/screener')({
   loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(screenerQueryOptions)
+    queryClient.ensureQueryData(screenerQueryOptions);
   },
   component: Screener
-})
+});
