@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 // CORS - needed in order to fetch data from client.
 // Only allowing requests from client and GET requests for now as no other methods are implemented.
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
