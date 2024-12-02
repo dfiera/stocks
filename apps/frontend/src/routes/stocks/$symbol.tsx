@@ -7,10 +7,25 @@ import {
 import Stock from '../../components/Stock.tsx';
 
 export const Route = createFileRoute('/stocks/$symbol')({
-  loader: ({ context: { queryClient }, params: { symbol } }) => {
-    queryClient.ensureQueryData(stockQueryOptions(symbol));
-    queryClient.ensureQueryData(priceChartQueryOptions(symbol));
-    queryClient.ensureQueryData(stockNewsQueryOptions(symbol));
+  beforeLoad: () => {
+    return {
+      stockQueryOptions,
+      priceChartQueryOptions,
+      stockNewsQueryOptions
+    }
+  },
+  loader: ({
+    context: {
+      queryClient,
+      stockQueryOptions,
+      priceChartQueryOptions,
+      stockNewsQueryOptions
+    },
+    params: { symbol }
+  }) => {
+    queryClient.prefetchQuery(stockQueryOptions(symbol));
+    queryClient.prefetchQuery(priceChartQueryOptions(symbol));
+    queryClient.prefetchQuery(stockNewsQueryOptions(symbol));
   },
   component: Stock
 });

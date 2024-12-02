@@ -1,9 +1,8 @@
+import { useParams, useRouteContext } from '@tanstack/react-router';
 import { useSuspenseQueries } from '@tanstack/react-query'
 import { Card } from './Card.tsx'
 import { AreaChart } from './AreaChart.tsx'
 import type { Quote, CompanyOverview, NewsArticle } from '../types.ts'
-import { Route as StockRoute } from '../routes/stocks/$symbol.tsx'
-import { stockQueryOptions, priceChartQueryOptions, stockNewsQueryOptions } from '../api/queryOptions.ts';
 
 let id = 0
 
@@ -59,7 +58,12 @@ const symbolInfo = [
 ]
 
 export default function Stock() {
-  const { symbol } = StockRoute.useParams();
+  const { symbol } = useParams({ from: '/stocks/$symbol' });
+  const {
+    stockQueryOptions,
+    priceChartQueryOptions,
+    stockNewsQueryOptions
+  } = useRouteContext({ from: '/stocks/$symbol' });
   const [
     { data: stockData },
     { data: priceChart },
