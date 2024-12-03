@@ -49,7 +49,7 @@ const fetchPriceChart = async (symbol: string) => {
   return await response.json() as PriceChart;
 };
 
-const fetchStockNews = async (symbol: string) => {
+const fetchCompanyNews = async (symbol: string) => {
   const response = await fetch(`https://api.polygon.io/v2/reference/news?ticker=${symbol}&order=desc&limit=10&sort=published_utc&apiKey=${process.env.POLYGON_API_KEY}`);
   const data = await response.json();
   const { results } = data;
@@ -57,7 +57,7 @@ const fetchStockNews = async (symbol: string) => {
   return results;
 };
 
-export const getStockInfo = async (symbol: string) => {
+export const getCompanyProfile = async (symbol: string) => {
   const [companyProfile, quote] = await Promise.all([
     fetchCompanyProfile(symbol),
     fetchQuote(symbol)
@@ -73,15 +73,15 @@ export const getPriceChart = async (symbol: string) => {
   return await fetchPriceChart(symbol);
 };
 
-export const getStockNews = async (symbol: string) => {
-  return await fetchStockNews(symbol);
+export const getCompanyNews = async (symbol: string) => {
+  return await fetchCompanyNews(symbol);
 };
 
 // export const getStock = async (symbol: string) => {
 //   const [companyProfile, quote, stockNews] = await Promise.all([
 //     fetchCompanyProfile(symbol),
 //     fetchQuote(symbol),
-//     fetchStockNews(symbol)
+//     fetchCompanyNews(symbol)
 //   ]);
 //
 //   return {

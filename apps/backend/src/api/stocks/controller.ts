@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import * as stocksService from './service.ts';
 
-export const getStockInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const getCompanyProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const symbol = req.params['symbol'];
-    const data = await stocksService.getStockInfo(symbol);
+    const data = await stocksService.getCompanyProfile(symbol);
 
     res.status(200).json(data);
   } catch (error) {
@@ -23,10 +23,10 @@ export const getPriceChart = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const getStockNews = async (req: Request, res: Response, next: NextFunction) => {
+export const getCompanyNews = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const symbol = req.params['symbol'];
-    const data = await stocksService.getStockNews(symbol);
+    const data = await stocksService.getCompanyNews(symbol);
 
     res.status(200).json(data);
   } catch (error) {
