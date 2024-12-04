@@ -14,7 +14,7 @@ export const fetchScreenerData = async () => {
 export const fetchStockInfo = async ({ queryKey }: { queryKey: [string, string] }) => {
   const [_key, symbol] = queryKey;
   try {
-    const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/info`);
+    const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/profile`);
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
