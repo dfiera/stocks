@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import {
   stockQueryOptions,
+  quoteQueryOptions,
   priceChartQueryOptions,
   stockNewsQueryOptions
 } from '../../api/queryOptions.ts';
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/stocks/$symbol')({
   beforeLoad: () => {
     return {
       stockQueryOptions,
+      quoteQueryOptions,
       priceChartQueryOptions,
       stockNewsQueryOptions
     }
@@ -18,12 +20,14 @@ export const Route = createFileRoute('/stocks/$symbol')({
     context: {
       queryClient,
       stockQueryOptions,
+      quoteQueryOptions,
       priceChartQueryOptions,
       stockNewsQueryOptions
     },
     params: { symbol }
   }) => {
     queryClient.prefetchQuery(stockQueryOptions(symbol));
+    queryClient.prefetchQuery(quoteQueryOptions(symbol));
     queryClient.prefetchQuery(priceChartQueryOptions(symbol));
     queryClient.prefetchQuery(stockNewsQueryOptions(symbol));
   },

@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { useParams, useRouteContext } from '@tanstack/react-router';
-import { useSuspenseQueries } from '@tanstack/react-query'
-import { Card } from './Card.tsx'
-import { AreaChart } from './AreaChart.tsx'
-import type { Quote, CompanyOverview, NewsArticle } from '../types.ts'
+import { useSuspenseQueries } from '@tanstack/react-query';
+import { useQuoteSubscription } from '../hooks/useQuoteSubscription.ts';
+import type { Quote, CompanyOverview, NewsArticle } from '../types.ts';
+import { Card } from './Card.tsx';
+import { AreaChart } from './AreaChart.tsx';
 
 let id = 0
 
@@ -61,20 +63,35 @@ export default function Stock() {
   const { symbol } = useParams({ from: '/stocks/$symbol' });
   const {
     stockQueryOptions,
+    quoteQueryOptions,
     priceChartQueryOptions,
     stockNewsQueryOptions
   } = useRouteContext({ from: '/stocks/$symbol' });
   const [
     { data: stockData },
+    { data: quote },
     { data: priceChart },
     { data: newsArticles }
   ] =  useSuspenseQueries({
     queries: [
       stockQueryOptions(symbol),
+      quoteQueryOptions(symbol),
       priceChartQueryOptions(symbol),
       stockNewsQueryOptions(symbol)
     ]
   });
+  const {
+    isConnected,
+    subscribe
+  } = useQuoteSubscription();
+
+  useEffect(() => {
+    if (isConnected) {
+      subscribe([symbol]);
+    }
+  }, [isConnected, symbol]);
+
+  console.log('Stock quote from Stock component', quote);
 
   return (
     <>
@@ -91,10 +108,10 @@ export default function Stock() {
             <div className="space-x-1">
               <span className="font-semibold text-nowrap space-x-1">
                 <span className="text-xl font-bold dark:text-white">
-                  {stockData.price.toFixed(2)}
+                  {quote.price.toFixed(2)}
                 </span>
                 <span className="text-emerald-500">
-                  {stockData.change > 0 ? '+' : '-'}{stockData.change.toFixed(2)} {`(${stockData.price > 0 ? '+' : '-'}${stockData.changePercentage.toFixed(2)}%)`}
+                  {quote.change > 0 ? '+' : ''}{quote.change.toFixed(2)} {`(${quote.price > 0 ? '+' : ''}${quote.changePercentage.toFixed(2)}%)`}
                 </span>
               </span>
             </div>
@@ -137,7 +154,7 @@ export default function Stock() {
               symbolInfo.map((item) => (
                 <div key={id++} className="flex justify-between">
                   <span>{item.label}</span>
-                  <span className="dark:text-white">{stockData[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
+                  <span className="dark:text-white">{quote[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
                 </div>
               ))
             }

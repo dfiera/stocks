@@ -10,7 +10,7 @@ export const createDataEmitter = (io: Server, redis: Redis) => {
       const subscribers = await redis.smembers(`stock:subscriptions:symbol:${symbol}`);
 
       subscribers.forEach(clientId => {
-        io.to(clientId).emit('quoteUpdate', { symbol, quote });
+        io.to(clientId).emit('quoteUpdate', { entity: ['stock', 'quote'], symbol, quote });
       });
     }
   };
