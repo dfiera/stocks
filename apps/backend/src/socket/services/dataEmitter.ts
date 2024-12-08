@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import { Redis } from 'ioredis';
+import logger from '../../utils/logger.ts';
 
 export const createDataEmitter = (io: Server, redis: Redis) => {
   const subscriber = redis.duplicate();
@@ -18,10 +19,10 @@ export const createDataEmitter = (io: Server, redis: Redis) => {
   const initialise = () => {
     subscriber.subscribe('quoteUpdate', (err, count) => {
       if (err) {
-        console.error('Failed to subscribe:', err);
+        logger.error('Failed to subscribe:', err);
         return;
       }
-      console.log(`Subscribed to ${count} channels`);
+      logger.info(`Subscribed to ${count} channels`);
     });
 
     subscriber.on('message', handleMessage);
