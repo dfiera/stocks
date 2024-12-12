@@ -1,7 +1,6 @@
 import { Redis } from 'ioredis';
 import logger from '../../utils/logger.ts';
 import { createSubscriptionManager } from './subscriptionManager.ts';
-import {symbol} from 'zod';
 
 type SubscriptionManager = ReturnType<typeof createSubscriptionManager>;
 
@@ -61,7 +60,7 @@ export const createDataIngestor = (redis: Redis, subscriptionManager: Subscripti
       await pipeline.exec();
     } catch (error) {
       if (error instanceof Error) {
-        logger.error(`Error storing quote for ${symbol}: ${error.message}`);
+        logger.error(`Error storing quote: ${error.message}`);
       }
     }
   };

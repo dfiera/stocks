@@ -1,6 +1,6 @@
 import { Server as HttpServer } from 'node:http';
 import { Server } from 'socket.io';
-import redis from '../redis/index.ts';
+import { redisClient } from '../redis/redis.ts';
 import logger from '../utils/logger.ts';
 import { createSubscriptionManager } from './services/subscriptionManager.ts';
 import { createDataIngestor } from './services/dataIngestor.ts';
@@ -14,9 +14,9 @@ export const setupSocketIO = (httpServer: HttpServer) => {
     }
   });
 
-  const subscriptionManager = createSubscriptionManager(redis);
-  const dataIngestor = createDataIngestor(redis, subscriptionManager);
-  const dataEmitter = createDataEmitter(io, redis);
+  const subscriptionManager = createSubscriptionManager(redisClient);
+  const dataIngestor = createDataIngestor(redisClient, subscriptionManager);
+  const dataEmitter = createDataEmitter(io, redisClient);
 
   dataIngestor.startPolling();
   dataEmitter.initialise();
