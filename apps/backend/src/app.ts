@@ -14,7 +14,8 @@ app.use(express.json());
 
 app.use(
   cors({
-    credentials: true
+    credentials: true,
+    origin: 'http://localhost:5173'
 }));
 
 app.use(helmet());

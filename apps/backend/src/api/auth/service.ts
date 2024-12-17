@@ -54,7 +54,7 @@ export const storeCredentials = async (email: string, password: string) => {
   const hashedPassword = await hashPassword(password);
 
   const user = {
-    id: 1,
+    id: Math.random(),
     email,
     password: hashedPassword
   };

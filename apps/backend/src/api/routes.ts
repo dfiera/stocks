@@ -13,6 +13,7 @@ router.post('/auth/logout', authenticate, authController.logout);
 router.get('/watchlist');
 router.get('/screener', screenerController.getScreener);
 router.get('/stocks/:symbol/profile', authenticate, stocksController.getCompanyProfile);
+router.get('/stocks/:symbol/quote', stocksController.getQuote);
 router.get('/stocks/:symbol/prices', stocksController.getPriceChart);
 router.get('/stocks/:symbol/news', stocksController.getCompanyNews);
 

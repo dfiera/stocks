@@ -34,6 +34,24 @@ export const getCompanyNews = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+export const getQuote = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const symbol = req.params['symbol'];
+
+    res.status(200).json({
+      price: 0,
+      change: 0,
+      changePercentage: 0,
+      open: 0,
+      high: 0,
+      low: 0,
+      previousClose: 0
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // export const getStock = async (req: Request, res: Response, next: NextFunction) => {
 //   try {
 //     const symbol = req.params['symbol'];
