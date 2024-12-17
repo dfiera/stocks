@@ -60,13 +60,13 @@ const symbolInfo = [
 ]
 
 export default function Stock() {
-  const { symbol } = useParams({ from: '/stocks/$symbol' });
+  const { symbol } = useParams({ from: '/_layout/stocks/$symbol' });
   const {
     stockQueryOptions,
     quoteQueryOptions,
     priceChartQueryOptions,
     stockNewsQueryOptions
-  } = useRouteContext({ from: '/stocks/$symbol' });
+  } = useRouteContext({ from: '/_layout/stocks/$symbol' });
   const [
     { data: stockData },
     { data: quote },
@@ -90,8 +90,6 @@ export default function Stock() {
       subscribe([symbol]);
     }
   }, [isConnected, symbol]);
-
-  console.log('Stock quote from Stock component', quote);
 
   return (
     <>
