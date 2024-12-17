@@ -63,3 +63,8 @@ export interface NewsArticle {
   image_url: string;
   description: string;
 }
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
