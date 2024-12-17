@@ -79,8 +79,6 @@ export const useQuoteSubscription = () => {
           ? oldData.map(update)
           : update(oldData);
       });
-
-      console.log('New quote event:', event);
     };
 
     socketRef.current?.on('connect', onConnect);
