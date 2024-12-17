@@ -12,7 +12,7 @@ import Search from './Search.tsx'
 import Stocks from './Stocks.tsx'
 import Pagination from './Pagination.tsx'
 import { sortData } from '../stubs'
-import { screenerQueryOptions } from '../api/queryOptions.ts';
+import { screenerQueryOptions } from '../api/queries.ts';
 import type { Screener } from '../types.ts';
 
 function Sort() {
