@@ -1,50 +1,21 @@
-# React + TypeScript + Vite
+# Stocks (WIP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A stocks application that enables users to track their personal stock portfolios, manage watchlists, and analyse market data effectively.
 
-Currently, two official plugins are available:
+The markets view enables users to gauge overall market sentiment and monitor the performance of different sectors. They can also create and manage their personal watchlists, adding or removing stocks of interest.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Selecting a stock opens a detailed view with in-depth information about the stock and company behind it, including:
 
-## Expanding the ESLint configuration
+- Company details: name, industry, sector, website, description, etc.
+- Stock metrics: real-time quote (price, change, open, high, low, close), volume, P/E ratio, market cap, yield, beta, EPS, etc.
+- Price chart displaying intra-day and historical price movements.
+- Company-specific news and events.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The screener enables users to search, sort and filter stocks to find those that fit their own search criteria, like trading volume, market capitalisation, P/E ratio, etc.
+This feature also highlights market top gainers and losers for quick insights.
 
-- Configure the top-level `parserOptions` property like this:
+The application consists of a React + Vite frontend and a Node.js + Express server.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+On the frontend, I use TailwindCSS for styling, TanStack Router for client-side navigation, TanStack Query for server state management and Socket.IO for real-time updates.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+The Express API exposes useful endpoints for managing watchlists, accessing stock screeners, retrieving company profiles, generating price charts, and fetching news. Socket.IO, Redis and PostgreSQL enable real-time bidirectional event-based communication between the client and the server.
