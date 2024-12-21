@@ -1,16 +1,16 @@
 services:
-#  db:
-#    container_name: db
-#    image: postgres:16.4-alpine
-#    restart: always
-#    environment:
-#      POSTGRES_USER: dbuser
-#      POSTGRES_PASSWORD: pa55w0rd
-#      POSTGRES_DB: postgres
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
+  db:
+    container_name: db
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: pa55w0rd
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   redis:
     container_name: redis
@@ -24,5 +24,5 @@ services:
       - redis_data:/data
 
 volumes:
-#  pgdata: {}
+  pgdata: {}
   redis_data: {}

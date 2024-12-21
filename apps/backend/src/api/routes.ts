@@ -3,8 +3,11 @@ import authenticate from '../middleware/authenticate.ts';
 import * as authController from './auth/controller.ts';
 import * as screenerController from './screener/controller.ts';
 import * as stocksController from './stocks/controller.ts';
+import { createDBTables } from './seed/controller.ts';
 
 const router = Router();
+
+router.get('/seed', createDBTables);
 
 router.get('/auth/status', authController.getAuthStatus);
 router.post('/auth/register', authController.register);

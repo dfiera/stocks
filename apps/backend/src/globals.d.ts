@@ -15,6 +15,7 @@ declare global {
       FINNHUB_API_KEY: string;
       STOCK_API_URL: string;
       POLL_INTERVAL: number;
+      DATABASE_URL: string;
       REDIS_HOST: string;
       REDIS_PORT: number;
       REDIS_PASSWORD: string;
