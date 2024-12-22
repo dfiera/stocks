@@ -1,8 +1,7 @@
 import { promisify } from 'node:util';
 import crypto from 'node:crypto';
+import { findUserByEmail, storeUserCredentials } from '../../db/queries.ts';
 import logger from '../../utils/logger.ts';
-
-const db = [];
 
 const randomBytesAsync = promisify(crypto.randomBytes);
 const scryptAsync: (arg1: crypto.BinaryLike, arg2: crypto.BinaryLike, arg3: number) => Promise<Buffer> = promisify(crypto.scrypt);
@@ -46,22 +45,10 @@ const compare = async (password: string, encodedKey: string) => {
   }
 };
 
-const findUserByEmail = async (email: string) => {
-  return db.find((user) => user.email === email) || null;
-};
-
 export const storeCredentials = async (email: string, password: string) => {
   const hashedPassword = await hashPassword(password);
 
-  const user = {
-    id: Math.random(),
-    email,
-    password: hashedPassword
-  };
-
-  console.log(user);
-
-  db.push(user);
+  await storeUserCredentials(email, hashedPassword);
 };
 
 export const validateCredentials = async (email: string, password: string) => {
