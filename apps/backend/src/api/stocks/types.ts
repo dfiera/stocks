@@ -25,30 +25,29 @@ export interface PriceChart {
 export interface CompanyProfile {
   symbol: string;
   companyName: string;
-  description: string;
+  exchange: string;
   currency: string;
-  mktCap: number;
-  volAvg: number;
-  beta: number;
-  exchangeShortName: string;
-  industry: string;
-  website: string;
+  description: string;
   sector: string;
+  industry: string;
   country: string;
-  fullTimeEmployees: string;
+  employees: string;
+  website: string;
+  beta: number;
 }
 
 export interface Quote {
   symbol: string;
-  name: string;
-  exchange: string;
   price: number;
   change: number;
-  changesPercentage: number;
+  changePercentage: number;
   open: number;
-  dayHigh: number;
-  dayLow: number;
+  high: number;
+  low: number;
   previousClose: number;
+}
+
+export interface DetailedQuote extends Quote {
   yearHigh: number;
   yearLow: number;
   volume: number;
@@ -56,4 +55,17 @@ export interface Quote {
   pe: number;
   marketCap: number;
   eps: number;
+}
+
+export interface NewsArticle {
+  id: string;
+  publisher: {
+    name: string;
+  };
+  title: string;
+  author: string;
+  publishedUtc: string;
+  articleUrl: string;
+  imageUrl: string;
+  description: string;
 }
