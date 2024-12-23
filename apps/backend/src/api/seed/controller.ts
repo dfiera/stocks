@@ -5,7 +5,7 @@ export const createDBTables = async (req: Request, res: Response, next: NextFunc
   try {
     await seedDB();
 
-    res.status(200).send('Database tables created successfully.');
+    res.status(200).json('Database tables created successfully.');
   } catch (error) {
     next(error);
   }

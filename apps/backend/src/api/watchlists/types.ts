@@ -1,10 +1,13 @@
-import type { PriceChart, Quote } from '../stocks/types.ts';
+import type { PriceChart, Quote, Symbol } from '../stocks/types.ts';
 
-export type WatchlistSymbol = Quote & { priceChart: PriceChart };
+export interface WatchlistSymbol extends Symbol {
+  quote: Quote | null;
+  priceChart: PriceChart | null;
+}
 
-export interface Watchlist {
+export interface Watchlist<T = WatchlistSymbol> {
   id: string;
   name: string;
   description: string;
-  symbols: (string | WatchlistSymbol)[];
+  symbols: T[];
 }

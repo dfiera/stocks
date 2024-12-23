@@ -1,25 +1,30 @@
 import { addSymbolToWatchlist, createWatchlistForUser, getUserWatchlists } from '../../db/queries.ts';
-import { Watchlist } from './types.ts';
+import type { Watchlist } from './types.ts';
 import * as stocksService from '../stocks/service.ts';
-import { PriceChart, Quote } from '../stocks/types.ts';
+import type { PriceChart, Quote, Symbol } from '../stocks/types.ts';
 
-const fetchPriceDataForWatchlist = async (watchlist: Watchlist): Promise<Watchlist> => {
+const fetchPriceDataForWatchlist = async (watchlist: Watchlist<Symbol>): Promise<Watchlist> => {
   const promises: Promise<[Quote, PriceChart]>[] = watchlist.symbols
-    .filter((symbol): symbol is string => typeof symbol === 'string')
-    .map((symbol) => {
-      const quotePromise = stocksService.getQuote(symbol as string);
-      const priceChartPromise = stocksService.getPriceChart(symbol as string, { interval: '5min', outputSize: '78' });
+    .map(({ symbol }) => {
+      const quotePromise = stocksService.getQuote(symbol);
+      const priceChartPromise = stocksService.getPriceChart(symbol, { interval: '5min', outputSize: '78' });
 
       return Promise.all([quotePromise, priceChartPromise]);
     });
+
   const data = await Promise.all(promises);
 
   return {
     ...watchlist,
-    symbols: data.map(([quote, priceChart]) => ({
-      ...quote,
-      priceChart
-    }))
+    symbols: watchlist.symbols.map((symbol) => {
+      const [quote, priceChart] = data.shift() || [null, null];
+
+      return {
+        ...symbol,
+        quote,
+        priceChart
+      };
+    })
   };
 };
 

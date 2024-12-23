@@ -1,6 +1,6 @@
-import { RowList } from 'postgres';
+import type { RowList } from 'postgres';
 import sql from './index.ts';
-import { Watchlist } from '../api/watchlists/types.ts';
+import type { Watchlist } from '../api/watchlists/types.ts';
 
 export const findUserByEmail = async (email: string): Promise<{ id: string; email: string; password: string}> => {
   const rows = await sql`
@@ -35,7 +35,15 @@ export const getUserWatchlists = async (userId: string): Promise<Watchlist[]> =>
       w.id,
       w.name,
       w.description,
-      COALESCE(array_agg(s.symbol) FILTER (WHERE s.symbol IS NOT NULL), ARRAY[]::VARCHAR[]) AS symbols
+      COALESCE(
+        array_agg(
+          jsonb_build_object(
+            'symbol', s.symbol,
+            'name', s.name
+          )
+        ) FILTER (WHERE s.symbol IS NOT NULL),
+        ARRAY[]::JSONB[]
+      ) AS symbols
     FROM
       watchlists w
     LEFT JOIN

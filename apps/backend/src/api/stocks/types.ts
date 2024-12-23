@@ -1,3 +1,12 @@
+export interface Symbol {
+  symbol: string;
+  name: string;
+  currency: string;
+  exchange: string;
+  country: string;
+  type: string;
+}
+
 export interface MetaObject {
   symbol: string;
   interval: string;
@@ -37,7 +46,6 @@ export interface CompanyProfile {
 }
 
 export interface Quote {
-  symbol: string;
   price: number;
   change: number;
   changePercentage: number;

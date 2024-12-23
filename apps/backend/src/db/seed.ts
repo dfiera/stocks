@@ -19,7 +19,7 @@ const createSymbolsTable = async () => {
     CREATE TABLE IF NOT EXISTS symbols (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       symbol VARCHAR(20) NOT NULL UNIQUE,
-      description VARCHAR(50) NOT NULL,
+      name VARCHAR(50) NOT NULL,
       type VARCHAR(255) NOT NULL,
       exchange VARCHAR(20) NOT NULL,
       currency VARCHAR(255) NOT NULL,
