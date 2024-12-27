@@ -3,8 +3,10 @@ import type {
   DetailedQuote,
   NewsArticle,
   PriceChart,
-  Quote
+  Quote,
+  Symbol
 } from './types.ts';
+import { storeSymbols } from '../../db/queries.ts';
 
 interface CompanyProfileAPIResponse {
   symbol: string;
@@ -63,6 +65,12 @@ interface NewsArticleAPIResponse {
   article_url: string;
   image_url: string;
   description: string;
+}
+
+interface AvailableSymbolsAPIResponse {
+  data: (Symbol & { access: { plan: string } })[];
+  count: number;
+  status: string;
 }
 
 const fetchCompanyProfile = async (symbol: string): Promise<CompanyProfile> => {
@@ -135,6 +143,16 @@ const fetchCompanyNews = async (symbol: string): Promise<NewsArticle[]> => {
   });
 };
 
+const fetchAvailableSymbols = async (): Promise<AvailableSymbolsAPIResponse> => {
+  const response = await fetch(`https://api.twelvedata.com/stocks?show_plan=true&apikey=${process.env.TD_API_KEY}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch available symbols: ${response.statusText}`);
+  }
+
+  return await response.json() as AvailableSymbolsAPIResponse;
+};
+
 export const getCompanyProfile = async (symbol: string) => {
   const [companyProfile, quote] = await Promise.all([
     fetchCompanyProfile(symbol),
@@ -162,7 +180,6 @@ export const getQuote = async (symbol: string): Promise<Quote> => {
   const data = await response.json() as SimpleQuoteAPIResponse;
 
   return {
-    symbol,
     price: data.c,
     change: data.d,
     changePercentage: data.dp,
@@ -179,4 +196,25 @@ export const getPriceChart = async (symbol: string, options?: { interval?: strin
 
 export const getCompanyNews = async (symbol: string) => {
   return await fetchCompanyNews(symbol);
+};
+
+export const storeSymbolsInDB = async () => {
+  const symbols = await fetchAvailableSymbols();
+  const availableSymbols = symbols.data
+    .reduce<Symbol[]>((result, symbol) => {
+      if (symbol?.access?.plan === 'Basic') {
+        result.push({
+          symbol: symbol.symbol,
+          name: symbol.name,
+          currency: symbol.currency,
+          exchange: symbol.exchange,
+          country: symbol.country,
+          type: symbol.type
+        });
+      }
+
+      return result;
+  }, []);
+
+  await storeSymbols(availableSymbols);
 };

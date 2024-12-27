@@ -9,6 +9,7 @@ import * as screenerController from './screener/controller.ts';
 const router = Router();
 
 router.get('/seed', createDBTables);
+router.get('/symbols', stocksController.storeSymbolsInDB);
 
 router.get('/auth/status', authController.getAuthStatus);
 router.post('/auth/register', authController.register);

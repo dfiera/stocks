@@ -45,3 +45,13 @@ export const getCompanyNews = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const storeSymbolsInDB = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await stocksService.storeSymbolsInDB();
+
+    res.status(200).json();
+  } catch (error) {
+    next(error);
+  }
+};
