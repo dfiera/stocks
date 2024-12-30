@@ -31,3 +31,23 @@ export const getMostActive = async (req: Request, res: Response, next: NextFunct
     next(error);
   }
 };
+
+export const getSectorPerformance = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await stockMarketService.getSectorPerformance();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMarketSentiment = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await stockMarketService.getMarketSentiment();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1056,3 +1056,50 @@ export const mostActive = [
     "changesPercentage": -3.3784
   }
 ];
+
+export const sectorPerformance = [
+  {
+    "sector": "Materials",
+    "changesPercentage": "-0.14529%"
+  },
+  {
+    "sector": "Communication Services",
+    "changesPercentage": "-0.4292%"
+  },
+  {
+    "sector": "Consumer Cyclical",
+    "changesPercentage": "-1.40905%"
+  },
+  {
+    "sector": "Consumer Defensive",
+    "changesPercentage": "-0.70093%"
+  },
+  {
+    "sector": "Energy",
+    "changesPercentage": "0.02869%"
+  },
+  {
+    "sector": "Financials",
+    "changesPercentage": "-0.28152%"
+  },
+  {
+    "sector": "Health Care",
+    "changesPercentage": "0.07758%"
+  },
+  {
+    "sector": "Industrials",
+    "changesPercentage": "-0.38346%"
+  },
+  {
+    "sector": "Real Estate",
+    "changesPercentage": "0.20106%"
+  },
+  {
+    "sector": "Information Technology",
+    "changesPercentage": "-0.90324%"
+  },
+  {
+    "sector": "Utilities",
+    "changesPercentage": "-0.07568%"
+  }
+];
