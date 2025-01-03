@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { createDBTables } from './seed/controller.ts';
 import authenticate from '../middleware/authenticate.ts';
 import * as authController from './auth/controller.ts';
-import * as stockMarketController from './markets/controller.ts';
+import * as marketsController from './markets/controller.ts';
 import * as stocksController from './stocks/controller.ts';
 import * as watchlistsController from './watchlists/controller.ts';
 import * as screenerController from './screener/controller.ts';
@@ -17,11 +17,12 @@ router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
 router.post('/auth/logout', authenticate, authController.logout);
 
-router.get('/markets/gainers', stockMarketController.getGainers);
-router.get('/markets/losers', stockMarketController.getLosers);
-router.get('/markets/actives', stockMarketController.getMostActive);
-router.get('/markets/sector-performance', stockMarketController.getSectorPerformance);
-router.get('/markets/market-sentiment', stockMarketController.getMarketSentiment);
+router.get('/markets/market-sentiment', marketsController.getMarketSentiment);
+router.get('/markets/gainers', marketsController.getTopGainers);
+router.get('/markets/losers', marketsController.getTopLosers);
+router.get('/markets/actives', marketsController.getMostActive);
+router.get('/markets/indices', marketsController.getMarketIndices);
+router.get('/markets/sector-performance', marketsController.getSectorPerformance);
 
 router.get('/stocks/:symbol/profile', authenticate, stocksController.getCompanyProfile);
 router.get('/stocks/:symbol/quote', stocksController.getQuote);

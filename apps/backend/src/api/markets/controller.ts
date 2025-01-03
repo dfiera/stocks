@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import * as stockMarketService from './service.ts';
+import * as marketsService from './service.ts';
 
-export const getGainers = async (req: Request, res: Response, next: NextFunction) => {
+export const getTopGainers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await stockMarketService.getGainers();
+    const data = await marketsService.getTopGainers();
 
     res.status(200).json(data);
   } catch (error) {
@@ -11,10 +11,10 @@ export const getGainers = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getLosers = async (req: Request, res: Response, next: NextFunction) => {
+export const getTopLosers = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    const data = await stockMarketService.getLosers();
+    const data = await marketsService.getTopLosers();
 
     res.status(200).json(data);
   } catch (error) {
@@ -24,7 +24,7 @@ export const getLosers = async (req: Request, res: Response, next: NextFunction)
 
 export const getMostActive = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await stockMarketService.getMostActive();
+    const data = await marketsService.getMostActive();
 
     res.status(200).json(data);
   } catch (error) {
@@ -34,7 +34,7 @@ export const getMostActive = async (req: Request, res: Response, next: NextFunct
 
 export const getSectorPerformance = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await stockMarketService.getSectorPerformance();
+    const data = await marketsService.getSectorPerformance();
 
     res.status(200).json(data);
   } catch (error) {
@@ -44,7 +44,17 @@ export const getSectorPerformance = async (req: Request, res: Response, next: Ne
 
 export const getMarketSentiment = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await stockMarketService.getMarketSentiment();
+    const data = await marketsService.getMarketSentiment();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMarketIndices = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await marketsService.getMarketIndices();
 
     res.status(200).json(data);
   } catch (error) {

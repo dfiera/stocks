@@ -61,7 +61,71 @@ const fetchSectorPerformance = async (): Promise<{ sector: string; changePercent
   }));
 };
 
+interface MarketNewsArticle {
+  title: string;
+  url: string;
+  time_published: string;
+  authors: string[];
+  summary: string;
+}
+
+const fetchLatestMarketNews = async (): Promise<MarketNewsArticle[]> => {
+  const response = await fetch(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&topics=economy_monetary&apikey=${process.env.AV_API_KEY}`);
+  const json = await response.json() as { items: string; feed: MarketNewsArticle[] };
+
+  return json.feed;
+}
+
 const fetchMarketSentiment = async (): Promise<{ rating: MarketSentiment; score: number }> => {
+  const response = await fetch('https://production.dataviz.cnn.io/index/fearandgreed/current', {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+    }
+  });
+  const json = await response.json() as { score: number; rating: MarketSentiment; timestamp: string; previous_close: number };
+
+  return {
+    rating: json.rating,
+    score: json.score
+  }
+};
+
+type Region = 'America' | 'Americas' | 'Europe' | 'APAC' | 'Asia-Pacific' | 'EMEA';
+
+interface MarketIndexAPIResponse {
+  name: string;
+  symbol: string;
+  current_price: number;
+  prev_close_price: number;
+  price_change_from_prev_close: number;
+  percent_change_from_prev_close: number;
+  prev_close_date: string;
+  last_updated: string;
+  country: {
+    name: string;
+    code: string;
+    region: string;
+  };
+}
+
+interface MarketIndex {
+  name: string;
+  symbol: string;
+  price: number;
+  prevClosePrice: number;
+  priceChange: number;
+  percentChange: number;
+  prevCloseDate: string;
+  lastUpdated: string;
+  country: {
+    name: string;
+    code: string;
+    region: string;
+  };
+}
+
+const fetchMarketIndices = async (region: Region[] = ['Americas', 'Europe', 'Asia-Pacific']): Promise<MarketIndex[]> => {
+  const regions = region.join(',');
   const today = new Date();
   const date = [
     today.getFullYear(),
@@ -69,24 +133,33 @@ const fetchMarketSentiment = async (): Promise<{ rating: MarketSentiment; score:
     ('0' + today.getDate()).slice(-2)
   ].join('-');
 
-  const response = await fetch(`https://production.dataviz.cnn.io/index/fearandgreed/graphdata/${date}`, {
+  const response = await fetch(`https://production.dataviz.cnn.io/markets/world/regions/${regions}/${date}`, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
     }
   });
-  const data = await response.json() as { fear_and_greed: { score: number; rating: MarketSentiment } };
+  const json = await response.json() as MarketIndexAPIResponse[];
 
-  return {
-    rating: data.fear_and_greed.rating,
-    score: data.fear_and_greed.score
-  }
+  return json.map((item) => {
+    return {
+      name: item.name,
+      symbol: item.symbol,
+      price: item.current_price,
+      prevClosePrice: item.prev_close_price,
+      priceChange: item.price_change_from_prev_close,
+      percentChange: item.percent_change_from_prev_close,
+      prevCloseDate: item.prev_close_date,
+      lastUpdated: item.last_updated,
+      country: item.country
+    };
+  });
 };
 
-export const getGainers = async () => {
+export const getTopGainers = async () => {
   return await fetchMarketGainers();
 };
 
-export const getLosers = async () => {
+export const getTopLosers = async () => {
   return await fetchMarketLosers();
 };
 
@@ -99,5 +172,13 @@ export const getSectorPerformance = async () => {
 };
 
 export const getMarketSentiment = async () => {
-  return await fetchMarketSentiment();
+  // const [marketSentiment, marketNews] = await Promise.all([fetchMarketSentiment(), fetchLatestMarketNews()]);
+  return {
+    marketSentiment: stubs.marketSentiment,
+    marketNews: stubs.marketNews
+  };
+};
+
+export const getMarketIndices = async () => {
+  return await fetchMarketIndices();
 };

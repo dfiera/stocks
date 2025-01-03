@@ -1103,3 +1103,112 @@ export const sectorPerformance = [
     "changesPercentage": "-0.07568%"
   }
 ];
+
+export const marketSentiment = {
+    "rating": "fear",
+    "score": 26.2285714285714
+};
+
+export const marketNews = [{
+  "title": "PIMCO Closed-End Funds Declare Monthly Common Share Distributions - PIMCO Access Inc Fd  ( NYSE:PAXS ) , PIMCO CA Muni Income Fund  ( NYSE:PCK ) ",
+  "url": "https://www.benzinga.com/pressreleases/25/01/g42777504/pimco-closed-end-funds-declare-monthly-common-share-distributions",
+  "time_published": "20250102T215519",
+  "authors": [
+    "Globe Newswire"
+  ],
+  "summary": "NEW YORK, Jan. 02, 2025 ( GLOBE NEWSWIRE ) -- The Boards of Trustees/Directors of the PIMCO closed-end funds below ( each, a \"Fund\" and, collectively, the \"Funds\" ) have declared a monthly distribution for each Fund's common shares as summarized below.",
+  "banner_image": "https://www.benzinga.com/next-assets/images/schema-image-default.png",
+  "source": "Benzinga",
+  "category_within_source": "News",
+  "source_domain": "www.benzinga.com",
+  "topics": [
+    {
+      "topic": "Economy - Monetary",
+      "relevance_score": "0.998626"
+    },
+    {
+      "topic": "IPO",
+      "relevance_score": "0.451494"
+    },
+    {
+      "topic": "Financial Markets",
+      "relevance_score": "1.0"
+    },
+    {
+      "topic": "Earnings",
+      "relevance_score": "0.839681"
+    },
+    {
+      "topic": "Mergers & Acquisitions",
+      "relevance_score": "0.576289"
+    }
+  ],
+  "overall_sentiment_score": 0.123199,
+  "overall_sentiment_label": "Neutral",
+  "ticker_sentiment": [
+    {
+      "ticker": "ALIZF",
+      "relevance_score": "0.020104",
+      "ticker_sentiment_score": "0.110348",
+      "ticker_sentiment_label": "Neutral"
+    },
+    {
+      "ticker": "CRYPTO:XCP",
+      "relevance_score": "0.010053",
+      "ticker_sentiment_score": "0.012665",
+      "ticker_sentiment_label": "Neutral"
+    }
+  ]
+}, {
+  "title": "3 Solid Stocks to Pick From the Prospering Savings & Loan Industry",
+  "url": "https://www.zacks.com/commentary/2390977/3-solid-stocks-to-pick-from-the-prospering-savings-loan-industry",
+  "time_published": "20250102T221100",
+  "authors": [
+    "Riya Anand"
+  ],
+  "summary": "Stocks in the Zacks Savings and Loan industry, such as BANR, HMST and CZWI, will benefit from the Fed rate cuts and improving lending scenarios.",
+  "banner_image": "https://staticx-tuner.zacks.com/images/articles/main/b6/2622.jpg",
+  "source": "Zacks Commentary",
+  "category_within_source": "n/a",
+  "source_domain": "www.zacks.com",
+  "topics": [
+    {
+      "topic": "Economy - Monetary",
+      "relevance_score": "0.682689"
+    },
+    {
+      "topic": "Financial Markets",
+      "relevance_score": "1.0"
+    },
+    {
+      "topic": "Earnings",
+      "relevance_score": "0.938238"
+    },
+    {
+      "topic": "Finance",
+      "relevance_score": "1.0"
+    }
+  ],
+  "overall_sentiment_score": 0.241897,
+  "overall_sentiment_label": "Somewhat-Bullish",
+  "ticker_sentiment": [
+    {
+      "ticker": "BAC",
+      "relevance_score": "0.023743",
+      "ticker_sentiment_score": "0.153214",
+      "ticker_sentiment_label": "Somewhat-Bullish"
+    },
+    {
+      "ticker": "BANR",
+      "relevance_score": "0.165031",
+      "ticker_sentiment_score": "0.21093",
+      "ticker_sentiment_label": "Somewhat-Bullish"
+    },
+    {
+      "ticker": "HMST",
+      "relevance_score": "0.188193",
+      "ticker_sentiment_score": "0.226382",
+      "ticker_sentiment_label": "Somewhat-Bullish"
+    }
+  ]
+}];
