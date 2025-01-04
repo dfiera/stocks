@@ -22,6 +22,8 @@ router.get('/markets/gainers', marketsController.getTopGainers);
 router.get('/markets/losers', marketsController.getTopLosers);
 router.get('/markets/actives', marketsController.getMostActive);
 router.get('/markets/indices', marketsController.getMarketIndices);
+router.get('/markets/currencies', marketsController.getCurrencies);
+router.get('/markets/crypto', marketsController.getCryptocurrencies);
 router.get('/markets/sector-performance', marketsController.getSectorPerformance);
 
 router.get('/stocks/:symbol/profile', authenticate, stocksController.getCompanyProfile);

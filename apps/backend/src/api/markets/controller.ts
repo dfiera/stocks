@@ -61,3 +61,23 @@ export const getMarketIndices = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
+
+export const getCurrencies = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await marketsService.getCurrencies();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCryptocurrencies = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await marketsService.getCryptocurrencies();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};

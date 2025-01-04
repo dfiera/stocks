@@ -1064,7 +1064,7 @@ export const sectorPerformance = [
   },
   {
     "sector": "Communication Services",
-    "changesPercentage": "-0.4292%"
+    "changesPercentage": "-1.4292%"
   },
   {
     "sector": "Consumer Cyclical",
