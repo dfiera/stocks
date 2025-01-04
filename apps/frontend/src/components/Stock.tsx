@@ -197,14 +197,14 @@ export default function Stock() {
                   <div className="flex items-center gap-4 mb-2">
                     <p className="font-bold w-4/5">{article.title}</p>
                     <img
-                      src={article.image_url}
+                      src={article.imageUrl}
                       width="128px"
                       height="128px"
                       alt={article.description}
                     />
                   </div>
                   <div className="flex text-gray-500 space-x-2">
-                    <span>{article.published_utc}</span>
+                    <span>{article.publishedUtc}</span>
                     <span className="font-bold">·</span>
                     <span>{article.author}</span>
                   </div>

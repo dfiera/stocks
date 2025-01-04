@@ -16,7 +16,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   return (
     <>
-      <div className="w-4/5 mt-6 mx-auto">
+      <div className="w-4/5 pt-5 mx-auto">
         <Outlet />
         <TanStackRouterDevtools />
         <ReactQueryDevtools />

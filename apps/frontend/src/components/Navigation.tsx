@@ -1,5 +1,8 @@
 import { createLink, useLocation, useRouter } from '@tanstack/react-router';
-import { RiFundsLine, RiStockLine, RiUserLine } from '@remixicon/react'
+import {
+  RiBankLine,
+  RiStockLine
+} from '@remixicon/react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { TabNavigation, TabNavigationLink } from './TabNavigation.tsx';
 
@@ -23,14 +26,14 @@ export default function Navigation() {
   const CustomLink = createLink(TabNavigationLink);
 
   return (
-    <TabNavigation className="flex justify-end px-6 mt-4 mb-8">
+    <TabNavigation className="flex justify-end px-6 mb-8">
       <div className="lg:flex items-start gap-8">
         <CustomLink
           to="/markets"
           active={location === '/markets'}
           className="inline-flex gap-2 px-0"
         >
-          <RiFundsLine className="size-4" aria-hidden="true" />
+          <RiBankLine className="size-4" aria-hidden="true" />
           Markets
         </CustomLink>
         <CustomLink
@@ -41,14 +44,14 @@ export default function Navigation() {
           <RiStockLine className="size-4" aria-hidden="true" />
           Screener
         </CustomLink>
-        <CustomLink
-          to="/profile"
-          active={location === '/profile'}
-          className="inline-flex gap-2 px-0"
-        >
-          <RiUserLine className="size-4" aria-hidden="true" />
-          Profile
-        </CustomLink>
+        {/*<CustomLink*/}
+        {/*  to="/profile"*/}
+        {/*  active={location === '/profile'}*/}
+        {/*  className="inline-flex gap-2 px-0"*/}
+        {/*>*/}
+        {/*  <RiUserLine className="size-4" aria-hidden="true" />*/}
+        {/*  Profile*/}
+        {/*</CustomLink>*/}
         <div className="lg:border-l border-gray-800 h-5" />
       </div>
       <div className="lg:ml-8">

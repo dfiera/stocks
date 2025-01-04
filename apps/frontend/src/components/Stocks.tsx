@@ -44,14 +44,14 @@ export default function Stocks({ data }: { data: Screener[] }) {
                 <TableCell>{item.price}</TableCell>
                 <TableCell>
                   <span className={`${(item.change > 0) ? 'dark:text-emerald-400' : 'dark:text-red-400'}`}>
-                    {(item.change > 0) ? '+' : '-'}{item.change.toFixed(2)}
+                    {(item.change > 0) ? '+' : ''}{item.change.toFixed(2)}
                   </span>
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant={item.changePercentage > 0 ? 'success' : 'error'}
                   >
-                    {(item.change > 0) ? '+' : '-'}{item.changePercentage.toFixed(2)}
+                    {(item.change > 0) ? '+' : ''}{item.changePercentage.toFixed(2)}
                   </Badge>
                 </TableCell>
                 <TableCell>{item.volume}</TableCell>
