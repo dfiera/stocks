@@ -18,6 +18,20 @@ export const watchlistQueryOptions = queryOptions({
   refetchOnWindowFocus: false
 });
 
+export const marketMoversQueryOptions = (category: string) => queryOptions({
+  queryKey: ['market', 'movers', category],
+  queryFn: api.fetchMarketMovers,
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
+});
+
+export const marketTrendsQueryOptions = (category: string) => queryOptions({
+  queryKey: ['market', 'trends', category],
+  queryFn: api.fetchMarketTrends,
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
+});
+
 export const screenerQueryOptions = queryOptions({
   queryKey: ['screener'],
   queryFn: api.fetchScreenerData,

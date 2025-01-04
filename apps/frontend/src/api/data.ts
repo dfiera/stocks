@@ -1,5 +1,6 @@
 import type {
   LoginCredentials,
+  MarketMovers,
   NewsArticle,
   PriceChart,
   Quote,
@@ -71,6 +72,46 @@ export const logout = async () => {
     }
   } catch (error) {
     console.error((error as Error).message);
+  }
+};
+
+export const fetchMarketMovers = async ({ queryKey }: { queryKey: [string, string, string] }): Promise<MarketMovers[]> => {
+  const [_key, __key, category] = queryKey;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/markets/${category}`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching market movers: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return [];
+  }
+};
+
+export const fetchMarketTrends = async ({ queryKey }: { queryKey: [string, string, string] }) => {
+  const [_key, __key, category] = queryKey;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/markets/${category}`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching market trends: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return [];
   }
 };
 
