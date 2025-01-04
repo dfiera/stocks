@@ -115,6 +115,54 @@ export const fetchMarketTrends = async ({ queryKey }: { queryKey: [string, strin
   }
 };
 
+export const fetchSectorPerformance = async (): Promise<{ sector: string; changePercentage: number }[]> => {
+  try {
+    const response = await fetch('http://localhost:3000/api/markets/sector-performance', {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching sector performance: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return [];
+  }
+};
+
+export const fetchMarketSentiment = async (): Promise<{
+  marketSentiment: { rating: string; score: number };
+  marketNews: {
+    title: string;
+    url: string;
+    time_published: string;
+    authors: string[];
+    summary: string;
+  }[]
+}> => {
+  try {
+    const response = await fetch('http://localhost:3000/api/markets/market-sentiment', {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching market sentiment: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return {
+      rating: 'neutral',
+      score: 0
+    };
+  }
+};
+
 export const fetchScreenerData = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/screener', {

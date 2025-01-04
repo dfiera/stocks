@@ -32,6 +32,20 @@ export const marketTrendsQueryOptions = (category: string) => queryOptions({
   staleTime: Infinity
 });
 
+export const sectorPerformanceQueryOptions = queryOptions({
+  queryKey: ['market', 'sectorPerformance'],
+  queryFn: api.fetchSectorPerformance,
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
+});
+
+export const marketSentimentQueryOptions = queryOptions({
+  queryKey: ['market', 'sentiment'],
+  queryFn: api.fetchMarketSentiment,
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
+});
+
 export const screenerQueryOptions = queryOptions({
   queryKey: ['screener'],
   queryFn: api.fetchScreenerData,
