@@ -12,6 +12,12 @@ export const checkAuthQueryOptions = queryOptions({
   staleTime: Infinity
 });
 
+export const watchlistQueryOptions = queryOptions({
+  queryKey: ['watchlist'],
+  queryFn: api.fetchWatchlists,
+  refetchOnWindowFocus: false
+});
+
 export const screenerQueryOptions = queryOptions({
   queryKey: ['screener'],
   queryFn: api.fetchScreenerData,

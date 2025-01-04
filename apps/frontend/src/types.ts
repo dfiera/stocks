@@ -16,8 +16,6 @@ export interface CompanyOverview {
 
 export interface Quote {
   symbol: string;
-  name: string;
-  exchange: string;
   price: number;
   change: number;
   changePercentage: number;
@@ -25,6 +23,12 @@ export interface Quote {
   high: number;
   low: number;
   previousClose: number;
+}
+
+export interface ExtendedQuote extends Quote {
+  symbol: string;
+  name: string;
+  exchange: string;
   yearHigh: number;
   yearLow: number;
   volume: number;
@@ -34,9 +38,12 @@ export interface Quote {
   eps: number;
 }
 
-export interface Stock {
-  overview: CompanyOverview;
-  quote: Quote;
+export interface MarketMovers {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercentage: number;
 }
 
 export interface Screener {
@@ -58,13 +65,56 @@ export interface NewsArticle {
   };
   title: string;
   author: string;
-  published_utc: string;
-  article_url: string;
-  image_url: string;
+  publishedUtc: string;
+  articleUrl: string;
+  imageUrl: string;
   description: string;
 }
 
 export interface LoginCredentials {
   email: string;
   password: string;
+}
+
+// Watchlist
+
+export interface MetaObject {
+  symbol: string;
+  interval: string;
+  currency: string;
+  exchange_timezone: string;
+  exchange: string;
+  mic_code: string;
+  type: string;
+}
+
+export interface OHLCPrice {
+  datetime: string;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+}
+
+export interface PriceChart {
+  meta: MetaObject | null;
+  values: OHLCPrice[]
+}
+
+export interface Symbol {
+  symbol: string;
+  name: string;
+}
+
+export interface WatchlistSymbol extends Symbol {
+  quote: Quote;
+  priceChart: PriceChart;
+}
+
+export interface Watchlist {
+  id: string;
+  name: string;
+  description: string;
+  symbols: WatchlistSymbol[];
 }

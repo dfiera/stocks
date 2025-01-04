@@ -1,4 +1,10 @@
-import { LoginCredentials } from '../types.ts';
+import type {
+  LoginCredentials,
+  NewsArticle,
+  PriceChart,
+  Quote,
+  Watchlist
+} from '../types.ts';
 
 export const checkAuth = async () => {
   try {
@@ -88,7 +94,6 @@ export const fetchStockInfo = async ({ queryKey }: { queryKey: [string, string] 
   const [_key, symbol] = queryKey;
   try {
     const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/profile`, {
-      method: 'GET',
       credentials: 'include'
     });
     if (!response.ok) {
@@ -101,13 +106,14 @@ export const fetchStockInfo = async ({ queryKey }: { queryKey: [string, string] 
   }
 }
 
-export const fetchStockQuote = async ({ queryKey }: { queryKey: [string, string, string] }) => {
+export const fetchStockQuote = async ({ queryKey }: { queryKey: [string, string, string] }): Promise<Quote> => {
   const [_key, __key, symbol] = queryKey;
+
   try {
     const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/quote`, {
-      method: 'GET',
       credentials: 'include'
     });
+
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
@@ -115,16 +121,19 @@ export const fetchStockQuote = async ({ queryKey }: { queryKey: [string, string,
     return await response.json();
   } catch (error) {
     console.error((error as Error).message);
+
+    return {};
   }
 };
 
-export const fetchPriceChart = async ({ queryKey }: { queryKey: [string, string] }) => {
+export const fetchPriceChart = async ({ queryKey }: { queryKey: [string, string] }): Promise<PriceChart> => {
   const [_key, symbol] = queryKey;
+
   try {
     const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/prices`, {
-      method: 'GET',
       credentials: 'include'
     });
+
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
@@ -132,16 +141,21 @@ export const fetchPriceChart = async ({ queryKey }: { queryKey: [string, string]
     return await response.json();
   } catch (error) {
     console.error((error as Error).message);
+
+    return {
+      meta: null,
+      values: []
+    };
   }
 };
 
-export const fetchStockNews = async ({ queryKey }: { queryKey: [string, string] }) => {
+export const fetchStockNews = async ({ queryKey }: { queryKey: [string, string] }): Promise<NewsArticle[]> => {
   const [_key, symbol] = queryKey;
   try {
     const response = await fetch(`http://localhost:3000/api/stocks/${symbol}/news`, {
-      method: 'GET',
       credentials: 'include'
     });
+
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
@@ -149,5 +163,25 @@ export const fetchStockNews = async ({ queryKey }: { queryKey: [string, string] 
     return await response.json();
   } catch (error) {
     console.error((error as Error).message);
+
+    return [];
+  }
+};
+
+export const fetchWatchlists = async (): Promise<Watchlist[]> => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/watchlists`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user watchlists. Response status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return [];
   }
 };

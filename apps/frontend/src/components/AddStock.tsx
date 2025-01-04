@@ -18,10 +18,10 @@ export default function AddStock() {
         <Dialog>
           <DialogTrigger asChild>
             <Button
-              className="h-10 text-base"
+              className="h-10 ml-2"
               variant="secondary"
             >
-              Add Stock
+              Add Symbol
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
