@@ -21,7 +21,7 @@ export default function Watchlist() {
 
   return (
     <>
-      <Card className="col-span-1 row-span-2 h-full overflow-scroll p-4">
+      <Card className="col-span-1 row-span-2 overflow-scroll p-4">
         <div className="flex items-center justify-between mb-3">
           <Select value={watchlistId} onValueChange={(value) => setWatchlistId(value)}>
             <SelectTrigger
