@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { startTransition, useState } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { marketMoversQueryOptions } from '../api/queries.ts';
 import { Link } from '@tanstack/react-router';
@@ -33,8 +33,8 @@ function MarketMoversTable({ data }: { data: MarketMovers[] }) {
           <TableRow>
             <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Symbol</TableHeaderCell>
             <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Name</TableHeaderCell>
-            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Price</TableHeaderCell>
-            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Change</TableHeaderCell>
+            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A] text-right">Price</TableHeaderCell>
+            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A] text-right">Change</TableHeaderCell>
             <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">% Change</TableHeaderCell>
           </TableRow>
         </TableHead>
@@ -47,13 +47,13 @@ function MarketMoversTable({ data }: { data: MarketMovers[] }) {
                 </Link>
               </TableCell>
               <TableCell>{item.name}</TableCell>
-              <TableCell>{item.price}</TableCell>
-              <TableCell>
+              <TableCell className="tabular-nums text-right">{item.price}</TableCell>
+              <TableCell className="tabular-nums text-right">
                   <span className={`${(item.change > 0) ? 'dark:text-emerald-400' : 'dark:text-red-400'}`}>
                     {(item.change > 0) ? '+' : ''}{item.change.toFixed(2)}
                   </span>
               </TableCell>
-              <TableCell>
+              <TableCell className="tabular-nums">
                 <Badge
                   variant={item.changePercentage > 0 ? 'success' : 'error'}
                 >
@@ -80,7 +80,14 @@ export default function MarketMovers() {
   return (
     <>
       <Card className="col-span-2 row-span-2 dark:text-white max-h-[25rem]">
-        <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
+        <Tabs
+          value={tab}
+          onValueChange={(value) => {
+            startTransition(() => {
+              setTab(value as Tab);
+            });
+          }}
+        >
           <TabsList variant="solid">
             <TabsTrigger value={tabCategories.actives} className="gap-1.5">
               <RiBarChartFill className="size-4" aria-hidden />
