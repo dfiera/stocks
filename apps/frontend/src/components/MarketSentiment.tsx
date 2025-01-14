@@ -2,8 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { marketSentimentQueryOptions } from '../api/queries.ts';
 import { cx } from '../lib/utils.ts';
 import { Card } from './Card.tsx';
-
-const capitaliseFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+import LinkDecorator from './LinkDecorator.tsx';
 
 const MARKET_SENTIMENT = {
   extremeGreed: 'extreme_greed',
@@ -21,6 +20,8 @@ const getSentimentColour = (sentiment: string) => {
         : ['text-neutral-400', 'bg-neutral-700/75'];
 };
 
+const truncateContent = (content: string, length: number) => `${content.slice(0, length)}...`;
+
 export default function MarketSentiment() {
   const { data } = useSuspenseQuery(marketSentimentQueryOptions);
   const { marketSentiment, marketNews } = data;
@@ -30,19 +31,23 @@ export default function MarketSentiment() {
 
   return (
     <>
-      <Card className="col-span-1 min-h-64 max-h-fit dark:text-white overflow-hidden">
+      <Card className="col-span-1 min-h-60 max-h-fit dark:text-white overflow-hidden">
         <div className="relative z-50">
-          <h1 className={`text-2xl font-bold leading-none tracking-tight pb-2 ${textColour}`}>
-            {capitaliseFirstLetter(rating)}
+          <h1 className={cx(
+            "text-2xl font-bold capitalize leading-none pb-1 tracking-tight",
+            `${textColour}`
+          )}>
+            {rating}
           </h1>
-          <h2 className="text-md leading-none tracking-tight pb-8">
+          <h2 className="text-md leading-none pb-8 tracking-tight">
             is driving the US market
           </h2>
           <p className="mt-10 mb-2 text-sm font-semibold text-neutral-500 dark:text-neutral-500">
             What you need to know today
           </p>
-          <a href={latestNewsArticle.url} className="font-semibold text-sm">
-            {latestNewsArticle.title}
+          <a href={latestNewsArticle.url} className="font-semibold text-sm group transition-all ease-in-out duration-200">
+            {truncateContent(latestNewsArticle.title, 75)}
+            <LinkDecorator />
           </a>
         </div>
         <div
