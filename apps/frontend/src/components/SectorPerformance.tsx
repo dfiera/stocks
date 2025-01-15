@@ -8,7 +8,7 @@ export default function SectorPerformance() {
 
   return (
     <>
-      <Card className="col-span-1 dark:text-white max-h-[25rem]">
+      <Card className="col-span-1 dark:text-white h-full">
         <h3 className="text-lg font-semibold leading-none tracking-tight pb-6">Sector Performance</h3>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         {

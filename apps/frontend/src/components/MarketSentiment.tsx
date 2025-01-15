@@ -31,21 +31,21 @@ export default function MarketSentiment() {
 
   return (
     <>
-      <Card className="col-span-1 min-h-60 max-h-fit dark:text-white overflow-hidden">
+      <Card className="col-span-1 max-h-52 dark:text-white overflow-hidden">
         <div className="relative z-50">
           <h1 className={cx(
-            "text-2xl font-bold capitalize leading-none pb-1 tracking-tight",
+            "text-2xl font-bold capitalize leading-none tracking-tight",
             `${textColour}`
           )}>
             {rating}
           </h1>
-          <h2 className="text-md leading-none pb-8 tracking-tight">
+          <h2 className="text-md tracking-tight">
             is driving the US market
           </h2>
-          <p className="mt-10 mb-2 text-sm font-semibold text-neutral-500 dark:text-neutral-500">
+          <p className="mt-11 text-sm font-semibold text-neutral-500 dark:text-neutral-500">
             What you need to know today
           </p>
-          <a href={latestNewsArticle.url} className="font-semibold text-sm group transition-all ease-in-out duration-200">
+          <a href={latestNewsArticle.url} className="inline-block mt-2 font-semibold text-sm group transition-all ease-in-out duration-200">
             {truncateContent(latestNewsArticle.title, 75)}
             <LinkDecorator />
           </a>
