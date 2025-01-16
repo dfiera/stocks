@@ -73,16 +73,18 @@ const TabNavigationLink = React.forwardRef<
         <span
           className={cx(
             // base
-            "-mb-px flex items-center justify-center whitespace-nowrap border-b-2 border-transparent px-3 pb-2 text-sm font-medium transition-all",
+            "-mb-px inline-block relative items-center justify-center whitespace-nowrap px-3 text-sm font-medium transition-all",
+            // ::after base
+            "after:absolute after:bottom-[-22px] after:left-0 after:w-full after:border-b-2 after:border-transparent after:pointer-events-none",
             // text color
             "text-gray-500 dark:text-gray-500",
             // hover
             "group-hover:text-gray-700 group-hover:dark:text-gray-400",
-            // border hover
-            "group-hover:border-gray-300 group-hover:dark:border-gray-400",
+            // ::after border hover
+            "group-hover:after:border-gray-300 group-hover:dark:after:border-gray-400",
             // selected
-            "group-data-[active]:border-blue-500 group-data-[active]:text-blue-500",
-            "group-data-[active]:dark:border-blue-500 group-data-[active]:dark:text-blue-500",
+            "group-data-[active]:after:border-blue-500 group-data-[active]:text-blue-500",
+            "group-data-[active]:dark:after:border-blue-500 group-data-[active]:dark:text-blue-500",
             // disabled
             disabled
               ? "pointer-events-none text-gray-300 dark:text-gray-700"
