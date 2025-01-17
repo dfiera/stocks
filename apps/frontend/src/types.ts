@@ -46,16 +46,21 @@ export interface MarketMovers {
   changePercentage: number;
 }
 
-export interface Screener {
+export interface StockScreener {
+  id: string;
   symbol: string;
   name: string;
+  country: string;
+  exchangeShortName: string;
+  sector: string;
+  industry: string;
   price: number;
-  change: number;
-  changePercentage: number;
   volume: number;
-  pe: number;
   marketCap: number;
-  eps: number;
+  lastAnnualDividend: number;
+  beta: number;
+  isEtf: boolean;
+  isFund: boolean;
 }
 
 export interface NewsArticle {
@@ -117,4 +122,18 @@ export interface Watchlist {
   name: string;
   description: string;
   symbols: WatchlistSymbol[];
+}
+
+export interface Filter {
+  id: number;
+  attribute: string;
+  condition: string;
+  value: string;
+}
+
+export interface SearchResult {
+  id: string;
+  symbol: string;
+  name: string;
+  exchangeShortName: string;
 }

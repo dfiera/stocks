@@ -29,7 +29,6 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
       <DialogContent className="overflow-hidden p-0 text-gray-500 dark:bg-gray-950">
         <Command
           loop
-          shouldFilter={false}
           className="[&_[cmdk-input-wrapper]_svg]:w-5"
         >
           {children}

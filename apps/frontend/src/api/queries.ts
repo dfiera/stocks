@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import * as api from './data.ts';
 
 export const checkAuthQueryOptions = queryOptions({
@@ -10,6 +10,13 @@ export const checkAuthQueryOptions = queryOptions({
   refetchOnWindowFocus: false,
   retry: false,
   staleTime: Infinity
+});
+
+export const symbolsQueryOptions = (search: string) => queryOptions({
+  queryKey: ['symbols', { search }],
+  queryFn: api.fetchFilteredSymbols,
+  placeholderData: keepPreviousData,
+  refetchOnWindowFocus: false
 });
 
 export const watchlistQueryOptions = queryOptions({

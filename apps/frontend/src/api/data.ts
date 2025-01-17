@@ -4,8 +4,11 @@ import type {
   NewsArticle,
   PriceChart,
   Quote,
+  SearchResult,
   Watchlist
 } from '../types.ts';
+
+// Auth
 
 export const checkAuth = async () => {
   try {
@@ -74,6 +77,37 @@ export const logout = async () => {
     console.error((error as Error).message);
   }
 };
+
+// Search
+export const fetchFilteredSymbols = async ({ queryKey }: { queryKey: [string, { search: string }] }): Promise<SearchResult[]> => {
+  const [_key, { search }] = queryKey;
+
+  try {
+    const params = new URLSearchParams();
+
+    if (search) {
+      params.append('search', search);
+    }
+
+    const queryParams = search ? `?${params}` : '';
+
+    const response = await fetch(`http://localhost:3000/api/symbols${queryParams}`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching filtered symbols: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return [];
+  }
+};
+
+// Market data
 
 export const fetchMarketMovers = async ({ queryKey }: { queryKey: [string, string, string] }): Promise<MarketMovers[]> => {
   const [_key, __key, category] = queryKey;

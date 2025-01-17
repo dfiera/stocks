@@ -1,10 +1,53 @@
-import { createLink, useLocation, useRouter } from '@tanstack/react-router';
+import {
+  createLink,
+  Link,
+  useLocation,
+  useRouter
+} from '@tanstack/react-router';
 import {
   RiBankLine,
-  RiStockLine
+  RiLogoutBoxLine,
+  RiStockLine,
+  RiUser3Line
 } from '@remixicon/react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { TabNavigation, TabNavigationLink } from './TabNavigation.tsx';
+import Search from './Search.tsx';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from './DropdownMenu.tsx';
+import { Button } from './Button.tsx';
+
+const AccountMenu = ({ onLogout }: { onLogout: () => void }) => {
+  return (
+    <DropdownMenu modal>
+      <DropdownMenuTrigger asChild>
+        <Button variant="light" className="group w-9 h-9 rounded-full p-0 focus-visible:outline-0">
+          <RiUser3Line className="size-4 fill-gray-500 group-hover:dark:fill-gray-400" aria-hidden />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="min-w-52">
+        <DropdownMenuLabel>Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link
+            to="/"
+            onClick={onLogout}
+            className="inline-flex items-center gap-x-2"
+          >
+            <RiLogoutBoxLine className="size-4 border-inherit" aria-hidden />
+            Log Out
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 export default function Navigation() {
   const { isAuthenticated, logout } = useAuth();
@@ -26,54 +69,37 @@ export default function Navigation() {
   const CustomLink = createLink(TabNavigationLink);
 
   return (
-    <TabNavigation className="flex justify-end px-6 mb-8">
-      <div className="lg:flex items-start gap-8">
+    <TabNavigation className="h-16 justify-end gap-8 px-8 mb-8">
+      <CustomLink
+        to="/markets"
+        active={location === '/markets'}
+        className="inline-flex gap-2 px-0"
+      >
+        <RiBankLine className="size-4" aria-hidden />
+        Markets
+      </CustomLink>
+
+      <CustomLink
+        to="/screener"
+        active={location === '/screener'}
+        className="inline-flex gap-2 px-0"
+      >
+        <RiStockLine className="size-4" aria-hidden />
+        Screener
+      </CustomLink>
+
+      <Search />
+      <div className="h-8 lg:border-l border-inherit" />
+      {!isAuthenticated ? (
         <CustomLink
-          to="/markets"
-          active={location === '/markets'}
-          className="inline-flex gap-2 px-0"
+          to="/login"
+          className="px-0"
         >
-          <RiBankLine className="size-4" aria-hidden="true" />
-          Markets
+          Log In
         </CustomLink>
-        <CustomLink
-          to="/screener"
-          active={location === '/screener'}
-          className="inline-flex gap-2 px-0"
-        >
-          <RiStockLine className="size-4" aria-hidden="true" />
-          Screener
-        </CustomLink>
-        {/*<CustomLink*/}
-        {/*  to="/profile"*/}
-        {/*  active={location === '/profile'}*/}
-        {/*  className="inline-flex gap-2 px-0"*/}
-        {/*>*/}
-        {/*  <RiUserLine className="size-4" aria-hidden="true" />*/}
-        {/*  Profile*/}
-        {/*</CustomLink>*/}
-        <div className="lg:border-l border-gray-800 h-5" />
-      </div>
-      <div className="lg:ml-8">
-        {
-          !isAuthenticated ? (
-            <CustomLink
-              to="/login"
-              className="px-0"
-            >
-              Log in
-            </CustomLink>
-          ) : (
-            <CustomLink
-              to="/"
-              onClick={handleLogout}
-              className="px-0"
-            >
-              Log out
-            </CustomLink>
-          )
-        }
-      </div>
+      ) : (
+        <AccountMenu onLogout={handleLogout} />
+      )}
     </TabNavigation>
   );
 }
