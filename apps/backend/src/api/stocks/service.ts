@@ -6,7 +6,7 @@ import type {
   Quote,
   Symbol
 } from './types.ts';
-import { storeSymbols } from '../../db/queries.ts';
+import { storeSymbols, getFilteredSymbolRows } from '../../db/queries.ts';
 
 interface CompanyProfileAPIResponse {
   symbol: string;
@@ -67,12 +67,6 @@ interface NewsArticleAPIResponse {
   description: string;
 }
 
-interface AvailableSymbolsAPIResponse {
-  data: (Symbol & { access: { plan: string } })[];
-  count: number;
-  status: string;
-}
-
 const fetchCompanyProfile = async (symbol: string): Promise<CompanyProfile> => {
   const response = await fetch(`https://financialmodelingprep.com/api/v3/profile/${symbol}?apikey=${process.env.FMP_API_KEY}`);
   const data =  await response.json() as CompanyProfileAPIResponse[];
@@ -117,7 +111,7 @@ const fetchDetailedQuote = async (symbol: string): Promise<DetailedQuote> => {
 };
 
 const fetchPriceChart = async (symbol: string, { interval = '1min', outputSize = '390' }: { interval?: string; outputSize?: string }): Promise<PriceChart> => {
-  const response = await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=${interval}&order=asc&outputsize=${outputSize}&apikey=${process.env.TD_API_KEY}`);
+  const response = await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&date=today&interval=${interval}&order=asc&outputsize=${outputSize}&apikey=${process.env.TD_API_KEY}`);
 
   return await response.json() as PriceChart;
 };
@@ -143,14 +137,14 @@ const fetchCompanyNews = async (symbol: string): Promise<NewsArticle[]> => {
   });
 };
 
-const fetchAvailableSymbols = async (): Promise<AvailableSymbolsAPIResponse> => {
-  const response = await fetch(`https://api.twelvedata.com/stocks?show_plan=true&apikey=${process.env.TD_API_KEY}`);
+const fetchAvailableSymbols = async (): Promise<Symbol[]> => {
+  const response = await fetch(`https://financialmodelingprep.com/api/v3/stock/list?apikey=${process.env.FMP_API_KEY}`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch available symbols: ${response.statusText}`);
   }
 
-  return await response.json() as AvailableSymbolsAPIResponse;
+  return await response.json() as Symbol[];
 };
 
 export const getCompanyProfile = async (symbol: string) => {
@@ -200,15 +194,14 @@ export const getCompanyNews = async (symbol: string) => {
 
 export const storeSymbolsInDB = async () => {
   const symbols = await fetchAvailableSymbols();
-  const availableSymbols = symbols.data
+  const availableSymbols = symbols
     .reduce<Symbol[]>((result, symbol) => {
-      if (symbol?.access?.plan === 'Basic') {
+      if (symbol.name && symbol.exchangeShortName) {
         result.push({
           symbol: symbol.symbol,
           name: symbol.name,
-          currency: symbol.currency,
           exchange: symbol.exchange,
-          country: symbol.country,
+          exchangeShortName: symbol.exchangeShortName,
           type: symbol.type
         });
       }
@@ -217,4 +210,8 @@ export const storeSymbolsInDB = async () => {
   }, []);
 
   await storeSymbols(availableSymbols);
+};
+
+export const getFilteredSymbols = async (search: string, limit: number) => {
+  return await getFilteredSymbolRows(search, limit);
 };

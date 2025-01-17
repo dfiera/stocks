@@ -13,19 +13,22 @@ export const findUserByEmail = async (email: string): Promise<{ id: string; emai
   return rows[0] as { id: string; email: string; password: string};
 };
 
-export const storeUserCredentials = async (email: string, password: string) => {
-  await sql`
+export const storeUserCredentials = async (email: string, password: string): Promise<string> => {
+  const [user] = await sql<[{ id: string }]>`
     INSERT INTO users(email, password)
     VALUES (${email}, ${password})
+    RETURNING id
   `;
+
+  return user.id;
 };
 
 const storeSymbol = async (symbol: Symbol): Promise<void> => {
   await sql`
-      INSERT INTO symbols(symbol, name, currency, exchange, country, type)
-      VALUES (${symbol.symbol}, ${symbol.name}, ${symbol.currency}, ${symbol.exchange}, ${symbol.country}, ${symbol.type})
+    INSERT INTO symbols(symbol, name, exchange, exchange_short_name, type)
+    VALUES (${symbol.symbol}, ${symbol.name}, ${symbol.exchange}, ${symbol.exchangeShortName}, ${symbol.type})
   `;
-}
+};
 
 export const storeSymbols = async (symbols: Symbol[]) => {
   try {
@@ -42,13 +45,13 @@ export const storeSymbols = async (symbols: Symbol[]) => {
 };
 
 export const createWatchlistForUser = async (userId: string, name: string, description: string) => {
-  const rows = await sql`
+  const [watchlist] = await sql<[Watchlist]>`
     INSERT INTO watchlists(user_id, name, description)
     VALUES (${userId}, ${name}, ${description})
     RETURNING id, name, description, ARRAY[]::VARCHAR[] AS symbols
   `;
 
-  return rows[0];
+  return watchlist;
 };
 
 export const getUserWatchlists = async (userId: string): Promise<Watchlist[]> => {
@@ -103,4 +106,23 @@ export const addSymbolToWatchlist = async (watchlistId: string, symbol: string) 
   `;
 
   return rows[0];
+};
+
+export const getFilteredSymbolRows = async (search: string, limit: number) => {
+  try {
+    const rows = await sql`
+      SELECT
+        id, symbol, name, exchange_short_name "exchangeShortName", type
+      FROM symbols ${
+        search !== ''
+          ? sql`WHERE symbol ILIKE ${`%${search}%`} OR name ILIKE ${`%${search}%`}`
+          : sql``
+      }
+      LIMIT ${limit}
+    `;
+    return rows;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

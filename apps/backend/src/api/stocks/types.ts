@@ -1,9 +1,8 @@
 export interface Symbol {
   symbol: string;
   name: string;
-  currency: string;
   exchange: string;
-  country: string;
+  exchangeShortName: string;
   type: string;
 }
 

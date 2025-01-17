@@ -8,7 +8,7 @@ const createUsersTable = async () => {
       email VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     )
   `;
 };
@@ -20,13 +20,12 @@ const createSymbolsTable = async () => {
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       symbol VARCHAR(20) NOT NULL,
       name VARCHAR(200) NOT NULL,
-      currency VARCHAR(10) NOT NULL,
-      exchange VARCHAR(20) NOT NULL,
-      country VARCHAR(30) NOT NULL,
+      exchange VARCHAR(40),
+      exchange_short_name VARCHAR(30) NOT NULL,
       type VARCHAR(50) NOT NULL,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      CONSTRAINT unique_symbol_exchange_name UNIQUE (symbol, name, exchange)
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT unique_symbol_exchange_name UNIQUE (symbol, name, exchange_short_name)
     )
   `;
 };
@@ -40,7 +39,7 @@ const createWatchlistsTable = async () => {
       name VARCHAR(255) NOT NULL,
       description TEXT,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT unique_user_watchlist_name UNIQUE (user_id, name)
     )
   `;
@@ -67,6 +66,7 @@ export const seedDB = async () => {
       await createWatchlistSymbolsTable();
     });
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

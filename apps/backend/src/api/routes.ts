@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createDBTables } from './seed/controller.ts';
+import { seedDatabase } from './seed/controller.ts';
 import authenticate from '../middleware/authenticate.ts';
 import * as authController from './auth/controller.ts';
 import * as marketsController from './markets/controller.ts';
@@ -9,8 +9,9 @@ import * as screenerController from './screener/controller.ts';
 
 const router = Router();
 
-router.get('/seed', createDBTables);
-router.get('/symbols', stocksController.storeSymbolsInDB);
+router.get('/seed', seedDatabase);
+
+router.get('/symbols', stocksController.getSymbols);
 
 router.get('/auth/status', authController.getAuthStatus);
 router.post('/auth/register', authController.register);
