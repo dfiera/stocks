@@ -3,8 +3,10 @@ import { useParams, useRouteContext } from '@tanstack/react-router';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { useQuoteSubscription } from '../hooks/useQuoteSubscription.ts';
 import type { Quote, CompanyOverview, NewsArticle } from '../types.ts';
+import { cx } from '../lib/utils.ts';
 import { Card } from './Card.tsx';
 import { AreaChart } from './AreaChart.tsx';
+import ReadMore from './ReadMore.tsx';
 
 let id = 0
 
@@ -93,25 +95,27 @@ export default function Stock() {
 
   return (
     <>
-      <Card className="dark:text-white p-16">
-        <div className="w-11/12 mx-auto">
+      <Card className="text-gray-900 dark:text-gray-50 p-4 sm:p-6 lg:p-8 xl:p-16 min-h-screen">
+        <div className="w-full max-w-7xl mx-auto">
+
           <div className="dark:text-gray-500 mb-4">
-            <div className="space-x-1">
-              <span className="text-xl font-bold dark:text-white">{stockData.symbol}</span>
+            <div className="flex flex-wrap items-center gap-x-1 gap-y-2">
+              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50">{stockData.symbol}</span>
               <span className="font-semibold">·</span>
-              <span>{stockData.companyName}</span>
+              <span className="text-sm sm:text-base font-medium">{stockData.companyName}</span>
               <span className="font-semibold">·</span>
-              <span>{stockData.exchange}</span>
+              <span className="text-sm sm:text-base font-medium">{stockData.exchange}</span>
             </div>
-            <div className="space-x-1">
-              <span className="font-semibold text-nowrap space-x-1">
-                <span className="text-xl font-bold dark:text-white">
-                  {quote.price.toFixed(2)}
-                </span>
-                <span className="text-emerald-500">
-                  {quote.change > 0 ? '+' : ''}{quote.change.toFixed(2)} {`(${quote.price > 0 ? '+' : ''}${quote.changePercentage.toFixed(2)}%)`}
-                </span>
-              </span>
+            <div className="flex flex-wrap items-center gap-2 text-gray-900 dark:text-gray-50">
+            <span className="text-lg sm:text-xl font-bold">
+              {quote.price.toFixed(2)}
+            </span>
+              <span className={cx(
+                'text-sm sm:text-base font-medium',
+                `${(quote.change > 0) ? 'dark:text-emerald-500' : 'dark:text-red-500'}`
+              )}>
+              {quote.change > 0 ? '+' : ''}{quote.change.toFixed(2)} {`(${quote.changePercentage > 0 ? '+' : ''}${quote.changePercentage.toFixed(2)}%)`}
+            </span>
             </div>
             {/*<div className="md:space-x-1 font-semibold break-words">*/}
             {/*  <span className="text-nowrap space-x-1">*/}
@@ -137,83 +141,92 @@ export default function Stock() {
             data={priceChart.values}
             index="datetime"
             categories={['close']}
-            colors={['emerald']}
+            colors={[`${quote.change > 0 ? 'emerald' : 'red'}`]}
             valueFormatter={(number: number) =>
-              `$${Intl.NumberFormat('us', { maximumFractionDigits: 2 }).format(number)}`
+              `${Intl.NumberFormat('us', {maximumFractionDigits: 2}).format(number)}`
             }
             showXAxis={false}
             showYAxis={false}
             showGridLines={false}
             showLegend={false}
             autoMinValue={true}
+            className="h-64 sm:h-80 lg:h-96"
           />
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 dark:text-gray-500">
-            {
-              symbolInfo.map((item) => (
-                <div key={id++} className="flex justify-between">
-                  <span>{item.label}</span>
-                  <span className="dark:text-white">{quote[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
-                </div>
-              ))
-            }
+
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 text-sm sm:text-base font-medium text-gray-900 dark:text-gray-50">
+            {symbolInfo.map((item) => (
+              <div key={id++} className="flex justify-between">
+                <span className="dark:text-gray-500">{item.label}</span>
+                <span
+                  className="">{quote[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
+              </div>
+            ))}
           </div>
-          <Card className="flex gap-6 text-sm mt-6 p-10">
-            <p className="w-9/12 text-pretty">
-              {stockData.description}
-            </p>
-            <div className="text-gray-500">
-              <div>
-                Sector: <span className="text-white">{stockData.sector}</span>
+
+          <Card className="relative mt-8 sm:mt-12 py-8 sm:py-12 min-h-max overflow-hidden">
+            <div
+              className="absolute z-0 h-full w-full bg-gradient-to-t from-neutral-50 via-neutral-200 to-neutral-50 blur-3xl transition-all duration-500 dark:from-gray-950 dark:via-slate-800/70 dark:to-gray-950"
+            />
+            <div
+              className="z-50 flex flex-col lg:flex-row justify-center gap-6 sm:gap-8"
+            >
+              <div className="z-50 max-w-2xl text-pretty font-medium text-sm">
+                <ReadMore text={stockData.description ?? ''} maxLength={500}/>
               </div>
-              <div>
-                Industry: <span className="text-white">{stockData.industry}</span>
-              </div>
-              <div>
-                Country: <span className="text-white">{stockData.country}</span>
-              </div>
-              <div>
-                Employees: <span className="text-white">{stockData.employees}</span>
-              </div>
-              <div>
-                Website:
-                {' '}
-                <a
-                  className="text-blue-600 hover:underline dark:text-blue-500"
-                  href={`${stockData.website}`}
-                >
-                  {stockData.website.slice(8)}
-                </a>
+              <div className="z-50 min-w-fit text-pretty font-medium text-sm text-gray-500">
+                <div>
+                  Sector: <span className="text-white">{stockData.sector}</span>
+                </div>
+                <div>
+                  Industry: <span className="text-white">{stockData.industry}</span>
+                </div>
+                <div>
+                  Country: <span className="text-white">{stockData.country}</span>
+                </div>
+                <div>
+                  Employees: <span className="text-white">{stockData.employees}</span>
+                </div>
+                <div>
+                  Website:
+                  {' '}
+                  <a
+                    className="text-blue-600 hover:underline dark:text-blue-500"
+                    href={`${stockData.website}`}
+                  >
+                    {stockData.website.slice(8)}
+                  </a>
+                </div>
               </div>
             </div>
           </Card>
-          <h1 className="text-3xl font-bold dark:text-white mt-6 mb-4">
-            Company News
-          </h1>
-          <Card className="grid grid-cols-2 gap-2 p-0 border-none">
-            {
-              newsArticles.map((article: NewsArticle) => (
-                <Card key={article.id} className="p-8">
-                  <span className="font-thin">{article.publisher.name}</span>
-                  <div className="flex items-center gap-4 mb-2">
-                    <p className="font-bold w-4/5">{article.title}</p>
+
+          <div className="mt-8 sm:mt-16 grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {newsArticles.map((article: NewsArticle) => (
+              <Card key={article.id} className="max-w-md mx-auto rounded-xl shadow-md overflow-hidden md:max-w-2xl hover:shadow-lg transition-shadow p-0">
+                <div className="md:flex">
+                  <div className="md:shrink-0">
                     <img
                       src={article.imageUrl}
-                      width="128px"
-                      height="128px"
+                      className="h-48 w-full object-cover md:h-full md:w-48"
                       alt={article.description}
                     />
                   </div>
-                  <div className="flex text-gray-500 space-x-2">
-                    <span>{article.publishedUtc}</span>
-                    <span className="font-bold">·</span>
-                    <span>{article.author}</span>
+                  <div className="p-6">
+                    <div className="tracking-wide text-xs text-slate-500 font-medium">{article.publisher.name}</div>
+                    <p className="mt-2 text-sm text-gray-900 dark:text-gray-50 font-semibold line-clamp-3">{article.title}</p>
+                    <div className="mt-2 space-x-1 text-xs text-slate-500 font-medium">
+                      <span>{article.publishedUtc}</span>
+                      <span className="font-bold">·</span>
+                      <span>{article.author}</span>
+                    </div>
                   </div>
-                </Card>
-              ))
-            }
-          </Card>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </Card>
     </>
-  )
+  );
 }
