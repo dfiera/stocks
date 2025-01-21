@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { startTransition, useState } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import {marketMoversQueryOptions, marketTrendsQueryOptions} from '../api/queries.ts';
-import { Link } from '@tanstack/react-router';
-import {RiFundsLine, RiBtcLine, RiExchangeLine, RiArrowUpSFill, RiArrowDownSFill} from '@remixicon/react';
-import type { MarketMovers } from '../types.ts';
+import {
+  RiArrowDownSFill,
+  RiArrowUpSFill,
+  RiBtcLine,
+  RiExchangeLine,
+  RiFundsLine
+} from '@remixicon/react';
+import { marketTrendsQueryOptions } from '../api/queries.ts';
+import { numberFormatter } from '../lib/utils.ts';
+import type { MarketTrendsItem } from '../types.ts';
 import {
   Table,
   TableBody,
@@ -15,54 +21,83 @@ import {
 } from './Table.tsx';
 import { Badge } from './Badge.tsx';
 import { Card } from './Card.tsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs.tsx';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from './Tabs.tsx';
+
+interface MarketTrendsTableProps {
+  data: MarketTrendsItem[];
+}
 
 type Tab = 'indices' | 'currencies' | 'crypto';
 
-const tabCategories = {
-  indices: 'indices',
-  currencies: 'currencies',
-  crypto: 'crypto'
-};
+const TAB_CATEGORIES = {
+  INDICES: 'indices',
+  CURRENCIES: 'currencies',
+  CRYPTO: 'crypto'
+} as const;
 
-function MarketTrendsTable({ tab, data }) {
+const TAB_DATA = [
+  {
+    value: TAB_CATEGORIES.INDICES,
+    label: 'Indices',
+    icon: RiFundsLine
+  },
+  {
+    value: TAB_CATEGORIES.CURRENCIES,
+    label: 'Currencies',
+    icon: RiExchangeLine
+  },
+  {
+    value: TAB_CATEGORIES.CRYPTO,
+    label: 'Crypto',
+    icon: RiBtcLine
+  }
+] as const;
+
+function MarketTrendsTable({ data }: MarketTrendsTableProps) {
+  const hasCountryColumn = data.some(item => item.country);
+
   return (
-    <TableRoot className="overflow-y-auto h-72">
-      <Table className="border-b-0">
+    <TableRoot className="overflow-y-auto max-h-80">
+      <Table className="border-b-0 w-full table-auto">
         <TableHead>
           <TableRow>
             <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Name</TableHeaderCell>
-            {
-              tab === tabCategories.indices && <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Country</TableHeaderCell>
-            }
-            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Price</TableHeaderCell>
+            {hasCountryColumn && (
+              <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Country</TableHeaderCell>
+            )}
+            <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A] text-right">Price</TableHeaderCell>
             <TableHeaderCell className="sticky top-0 dark:bg-[#090E1A]">Change</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map((item) => (
             <TableRow key={`${item.symbol}-${item.name}`}>
-              <TableCell>
-                {item.prettySymbol ? item.prettySymbol : item.name}
+              <TableCell className="text-gray-900 dark:text-gray-50">
+                {item.prettySymbol ?? item.name}
               </TableCell>
-              {
-                item.country && (
-                  <TableCell>
-                    {item.country.name}
-                  </TableCell>
-                )
-              }
-              <TableCell>{item.price.toFixed(2)}</TableCell>
-              <TableCell>
+              {hasCountryColumn && (
+                <TableCell>
+                  {item.country?.name}
+                </TableCell>
+              )}
+              <TableCell className="tabular-nums text-right">
+                {numberFormatter.format(item.price)}
+              </TableCell>
+              <TableCell className="tabular-nums">
                 <Badge
                   variant={item.priceChange > 0 ? 'success' : 'error'}
+                  className="min-w-fit gap-0"
                 >
-                  {
-                    item.priceChange > 0
-                      ? <RiArrowUpSFill className="-ml-0.5 size-4" aria-hidden={true} />
-                      : <RiArrowDownSFill className="-ml-0.5 size-4" aria-hidden={true} />
+                  {item.priceChange > 0
+                    ? <RiArrowUpSFill className="-ml-1 size-4 shrink-0" aria-hidden />
+                    : <RiArrowDownSFill className="-ml-1 size-4 shrink-0" aria-hidden />
                   }
-                  {Math.abs(item.priceChange).toFixed(2)}
+                  {numberFormatter.format(Math.abs(item.priceChange))}
                 </Badge>
               </TableCell>
             </TableRow>
@@ -70,38 +105,40 @@ function MarketTrendsTable({ tab, data }) {
         </TableBody>
       </Table>
     </TableRoot>
-  )
+  );
 }
 
 export default function MarketTrends() {
-  const [tab, setTab] = useState<Tab>(tabCategories.indices);
+  const [tab, setTab] = useState<Tab>(TAB_CATEGORIES.INDICES);
   const { data } = useSuspenseQuery(marketTrendsQueryOptions(tab));
+
+  const handleTabChange = (value: string) => {
+    startTransition(() => {
+      setTab(value as Tab);
+    });
+  };
 
   return (
     <>
-      <Card className="col-span-1 dark:text-white max-h-[25rem]">
-        <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
-          <TabsList className="grid w-full grid-cols-3" variant="solid">
-            <TabsTrigger value={tabCategories.indices} className="gap-1.5">
-              <RiFundsLine className="size-4" aria-hidden />
-              Indices
-            </TabsTrigger>
-            <TabsTrigger value={tabCategories.currencies} className="gap-1.5">
-              <RiExchangeLine className="size-4" aria-hidden />
-              Currencies
-            </TabsTrigger>
-            <TabsTrigger value={tabCategories.crypto} className="gap-1.5">
-              <RiBtcLine className="size-4" aria-hidden />
-              Crypto
-            </TabsTrigger>
+      <Card className="dark:text-white overflow-x-auto h-full">
+        <Tabs value={tab} onValueChange={handleTabChange}>
+          <TabsList variant="solid">
+            {TAB_DATA.map(({ value, label, icon: Icon }) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                className="h-9 gap-1.5 px-3 py-1.5"
+              >
+                <Icon className="size-5 shrink-0" aria-hidden />
+                {label}
+              </TabsTrigger>
+            ))}
           </TabsList>
-          <div className="mt-4">
-            <TabsContent value={tab}>
-              <MarketTrendsTable tab={tab} data={data} />
-            </TabsContent>
-          </div>
+          <TabsContent value={tab} className="mt-4">
+            <MarketTrendsTable data={data} />
+          </TabsContent>
         </Tabs>
       </Card>
     </>
-  )
+  );
 }

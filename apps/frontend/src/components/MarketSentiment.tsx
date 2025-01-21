@@ -20,7 +20,10 @@ const getSentimentColour = (sentiment: string) => {
         : ['text-neutral-400', 'bg-neutral-700/75'];
 };
 
-const truncateContent = (content: string, length: number) => `${content.slice(0, length)}...`;
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
+};
 
 export default function MarketSentiment() {
   const { data } = useSuspenseQuery(marketSentimentQueryOptions);
@@ -31,24 +34,28 @@ export default function MarketSentiment() {
 
   return (
     <>
-      <Card className="col-span-1 max-h-52 dark:text-white overflow-hidden">
-        <div className="relative z-50">
-          <h1 className={cx(
-            "text-2xl font-bold capitalize leading-none tracking-tight",
-            `${textColour}`
-          )}>
-            {rating}
-          </h1>
-          <h2 className="text-md tracking-tight">
-            is driving the US market
-          </h2>
-          <p className="mt-11 text-sm font-semibold text-neutral-500 dark:text-neutral-500">
-            What you need to know today
-          </p>
-          <a href={latestNewsArticle.url} className="inline-block mt-2 font-semibold text-sm group transition-all ease-in-out duration-200">
-            {truncateContent(latestNewsArticle.title, 75)}
-            <LinkDecorator />
-          </a>
+      <Card className="h-full overflow-hidden">
+        <div className="h-full flex flex-col justify-between relative z-10 text-gray-900 dark:text-gray-50">
+          <div>
+            <h1 className={cx(
+              "text-2xl font-bold capitalize leading-none tracking-tight",
+              `${textColour}`
+            )}>
+              {rating}
+            </h1>
+            <h2 className="mt-0.5 text-base font-medium tracking-tight">
+              is driving the US market
+            </h2>
+          </div>
+          <div className="lg:pb-8">
+            <p className="mt-10 text-sm font-medium text-neutral-500 dark:text-neutral-500">
+              What you need to know today
+            </p>
+            <a href={latestNewsArticle.url} className="inline-block mt-1.5 text-sm font-medium dark:hover:text-neutral-200 group transition-all ease-in-out duration-200">
+              {truncateText(latestNewsArticle.title, 72)}
+              <LinkDecorator />
+            </a>
+          </div>
         </div>
         <div
           className={`pointer-events-none absolute inset-0 z-0 h-[75%] w-[75%] -translate-x-[15%] -translate-y-[40%] rounded-full blur-3xl ${bgColour}`}

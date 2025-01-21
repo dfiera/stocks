@@ -38,12 +38,23 @@ export interface ExtendedQuote extends Quote {
   eps: number;
 }
 
-export interface MarketMovers {
+export interface MarketMoversItem {
   symbol: string;
   name: string;
   price: number;
   change: number;
   changePercentage: number;
+}
+
+export interface MarketTrendsItem {
+  symbol: string;
+  prettySymbol: string;
+  name: string;
+  price: number;
+  priceChange: number;
+  country?: {
+    name: string;
+  }
 }
 
 export interface StockScreener {
