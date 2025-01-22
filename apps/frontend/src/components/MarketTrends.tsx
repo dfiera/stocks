@@ -120,9 +120,9 @@ export default function MarketTrends() {
 
   return (
     <>
-      <Card className="dark:text-white overflow-x-auto h-full">
+      <Card className="text-gray-900 dark:text-gray-50 overflow-x-auto h-full">
         <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList variant="solid">
+          <TabsList className="grid grid-cols-3 sm:inline-flex" variant="solid">
             {TAB_DATA.map(({ value, label, icon: Icon }) => (
               <TabsTrigger
                 key={value}

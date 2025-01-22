@@ -1,21 +1,24 @@
 import { useState } from 'react';
 
-export default function ReadMore({ content, length }: {
-  content: string
-  length: number
+export default function ReadMore({ text, maxLength }: {
+  text: string
+  maxLength: number
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const truncatedContent = `${content.slice(0, length)}...`;
+  const getTruncatedText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return `${text.slice(0, maxLength)}...`;
+  };
 
   return (
     <>
       <p>
         {isExpanded
-          ? content
-          : truncatedContent
+          ? text
+          : getTruncatedText(text, maxLength)
         }
       </p>
-      {content.length > length && (
+      {text.length > length && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-blue-600 dark:text-blue-500 mt-0.5"

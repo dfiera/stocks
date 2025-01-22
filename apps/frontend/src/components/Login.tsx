@@ -47,7 +47,7 @@ export default function Login() {
     <>
       <Toaster />
       <div className="flex min-h-screen flex-1 flex-col justify-center px-4 py-10 lg:px-6">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm dark:text-white">
+        <div className="text-gray-900 dark:text-gray-50 sm:mx-auto sm:w-full sm:max-w-sm">
           <h3 className="text-center font-semibold">
             Welcome back
           </h3>

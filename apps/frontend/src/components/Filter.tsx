@@ -97,7 +97,7 @@ export default function Filter({
       onOpenChange={(open) => setIsOpen(open)}
     >
       <PopoverTrigger asChild>
-        <Button variant="secondary" className="gap-1.5">
+        <Button variant="secondary" className="gap-1.5 w-full sm:w-auto">
           <RiFilter3Line className="size-5" aria-hidden />
           Filter stocks{' '}
           {appliedFiltersCount > 0 && (
@@ -200,7 +200,11 @@ export default function Filter({
             >
               Clear
             </Button>
-            <Button onClick={handleApply}>Apply</Button>
+            <Button
+              onClick={handleApply}
+            >
+              Apply
+            </Button>
           </div>
         </div>
       </PopoverContent>
