@@ -1,7 +1,11 @@
-import type { RowList } from 'postgres';
+import { PendingQuery, Row, RowList } from 'postgres';
 import sql from './index.ts';
 import type { Symbol } from '../api/stocks/types.ts';
 import type { Watchlist } from '../api/watchlists/types.ts';
+import { StockScreener, StockScreenerAPIResponse } from '../api/screener/types.ts';
+import { ScreenerOptions } from '../api/screener/types.ts';
+
+type FilterConditions = 'ct' | 'nct' | 'gt' | 'lt' | 'gte' | 'lte';
 
 export const findUserByEmail = async (email: string): Promise<{ id: string; email: string; password: string}> => {
   const rows = await sql`
@@ -40,6 +44,115 @@ export const storeSymbols = async (symbols: Symbol[]) => {
       await Promise.all(promises);
     });
   } catch (error) {
+    throw error;
+  }
+};
+
+export const isStockScreenerTableEmpty = async () => {
+  const [result] = await sql`SELECT COUNT(*) FROM stock_screener`;
+
+  return Number(result.count) === 0;
+};
+
+export const populateScreenerTable = async (stocks: StockScreenerAPIResponse[]) => {
+  const storeScreenerStock = async (stock: StockScreenerAPIResponse): Promise<void> => {
+    await sql`
+      INSERT INTO stock_screener(symbol, name, country, exchange_short_name, sector, industry, price, volume, market_cap, last_annual_dividend, beta, is_etf, is_fund, is_actively_trading)
+      VALUES (${stock.symbol}, ${stock.companyName}, ${stock.country}, ${stock.exchangeShortName}, ${stock.sector}, ${stock.industry}, ${stock.price}, ${stock.volume}, ${stock.marketCap}, ${stock.lastAnnualDividend}, ${stock.beta}, ${stock.isEtf}, ${stock.isFund}, ${stock.isActivelyTrading})
+    `;
+  };
+
+  try {
+    await sql.begin(async () => {
+      const promises = [];
+      for (const stock of stocks) {
+        promises.push(storeScreenerStock(stock));
+      }
+      await Promise.all(promises);
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getScreenerRowsWithCount = async ({ filters, search, page, pageSize }: ScreenerOptions): Promise<[StockScreener[], number]> => {
+  const conditionToSql: Record<FilterConditions, (attribute: string, value: string) => PendingQuery<Row[]>> = {
+    // contains
+    ct: (attribute: string, value: string) => sql`${ sql(attribute) } ILIKE ${ `%${value}%` }`,
+    // not contains
+    nct: (attribute: string, value: string) => sql`${ sql(attribute) } NOT ILIKE ${ `%${value}%` }`,
+    // greater than
+    gt: (attribute: string, value: string) => sql`${ sql(attribute) } > ${ Number(value) }`,
+    // lower than
+    lt: (attribute: string, value: string) => sql`${ sql(attribute) } < ${ Number(value) }`,
+    // greater than or equal to
+    gte: (attribute, value) => sql`${ sql(attribute) } >= ${ Number(value) }`,
+    // less than or equal to
+    lte: (attribute: string, value: string) => sql`${ sql(attribute) } <= ${ Number(value) }`
+  };
+
+  try {
+    const conditions = filters
+      .map((filter) => conditionToSql[filter.condition as FilterConditions]?.(filter.attribute, filter.value))
+      .filter(Boolean);
+
+    if (search) {
+      conditions.push(sql`(name ILIKE ${ `%${search}%` } OR symbol ILIKE ${ `%${search}%` })`);
+    }
+
+    const whereClause = conditions.length > 1
+      ? sql`WHERE ${conditions.reduce((prev, curr) => sql`${prev} AND ${curr}`)}`
+      : sql`WHERE ${conditions}`;
+
+    const [result] = await sql`
+      SELECT
+        (
+          SELECT COUNT(*)
+          FROM stock_screener ${
+            conditions.length > 0
+              ? whereClause
+              : sql``
+          }
+        ) as total_count,
+        (
+          SELECT json_agg(
+            json_build_object(
+              'id', id,
+              'symbol', symbol,
+              'name', name,
+              'country', country,
+              'exchangeShortName', exchange_short_name,
+              'sector', sector,
+              'industry', industry,
+              'price', price,
+              'volume', volume,
+              'marketCap', market_cap,
+              'lastAnnualDividend', last_annual_dividend,
+              'beta', beta,
+              'isEtf', is_etf,
+              'isFund', is_fund
+            )
+          ) as rows
+          FROM (
+            SELECT *
+            FROM stock_screener ${
+              conditions.length > 0
+                ? whereClause
+                : sql``
+            }
+            ORDER BY market_cap DESC
+            LIMIT ${pageSize}
+            OFFSET ${(page - 1) * pageSize}
+          ) sub
+        ) as data
+    `;
+
+    return [
+      result.data || [],
+      Number(result.total_count) || 0
+    ];
+  } catch (error) {
+    console.error('getScreenerRowsWithCount query error', error);
     throw error;
   }
 };

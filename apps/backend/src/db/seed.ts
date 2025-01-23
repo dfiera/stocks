@@ -30,6 +30,32 @@ const createSymbolsTable = async () => {
   `;
 };
 
+const createStockScreenerTable = async () => {
+  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  await sql`
+    CREATE TABLE IF NOT EXISTS stock_screener (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      symbol VARCHAR(20) NOT NULL,
+      name VARCHAR(200),
+      country VARCHAR(30),
+      exchange_short_name VARCHAR(20) NOT NULL,
+      sector VARCHAR(30),
+      industry VARCHAR(50),
+      price FLOAT NOT NULL,
+      volume BIGINT NOT NULL,
+      market_cap BIGINT NOT NULL,
+      last_annual_dividend FLOAT NOT NULL,
+      beta FLOAT,
+      is_etf BOOLEAN,
+      is_fund BOOLEAN,
+      is_actively_trading BOOLEAN NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT unique_symbol_name UNIQUE (symbol, name, exchange_short_name)
+    )
+  `;
+};
+
 const createWatchlistsTable = async () => {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await sql`
@@ -64,6 +90,7 @@ export const seedDB = async () => {
       await createSymbolsTable();
       await createWatchlistsTable();
       await createWatchlistSymbolsTable();
+      await createStockScreenerTable();
     });
   } catch (error) {
     console.log(error);

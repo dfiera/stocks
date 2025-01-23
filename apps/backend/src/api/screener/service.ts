@@ -1,64 +1,34 @@
-type SymbolList = {
-  symbol: string;
-  name: string;
-}[];
+import type { ScreenerOptions, StockScreener, StockScreenerAPIResponse } from './types.ts';
+import {
+  getScreenerRowsWithCount,
+  isStockScreenerTableEmpty,
+  populateScreenerTable
+} from '../../db/queries.ts';
 
-interface Quote {
-  symbol: string;
-  name: string;
-  exchange: string;
-  price: number;
-  change: number;
-  changesPercentage: number;
-  open: number;
-  dayHigh: number;
-  dayLow: number;
-  previousClose: number;
-  yearHigh: number;
-  yearLow: number;
-  volume: number;
-  avgVolume: number;
-  pe: number;
-  marketCap: number;
-  eps: number;
-}
+const fetchScreenerFromExternalAPI = async (): Promise<StockScreenerAPIResponse[]> => {
+  const response = await fetch(`https://financialmodelingprep.com/api/v3/stock-screener?apikey=${process.env.FMP_API_KEY}&isActivelyTrading=true&limit=20000`);
 
-const fetchSymbolList = async () => {
-  const response = await fetch(`https://financialmodelingprep.com/api/v3/stock/list?apikey=${process.env.FMP_API_KEY}`);
+  if(!response.ok) {
+    throw new Error(`Failed to fetch screener data from API: ${response.statusText}`);
+  }
 
-  return await response.json() as SymbolList;
+  return response.json();
 };
 
-const fetchQuote = async (symbols: string[]): Promise<Quote[]> => {
-  const commaSeparatedSymbols = symbols.join(',');
-  const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${commaSeparatedSymbols}?apikey=${process.env.FMP_API_KEY}`);
-  return await response.json() as Quote[];
-};
+export const getScreener = async (options: ScreenerOptions): Promise<{ data: StockScreener[]; totalCount: number; currentPage: number; pageCount: number }> => {
+  const isEmpty = await isStockScreenerTableEmpty();
 
-export const getScreener = async () => {
-  const symbols = ['AAPL', 'MSFT'];
+  if (isEmpty) {
+    const data = await fetchScreenerFromExternalAPI();
+    await populateScreenerTable(data);
+  }
 
-  const quotes = await fetchQuote(symbols);
+  const [rows, totalCount] = await getScreenerRowsWithCount(options);
 
-  return quotes.map((quote) => {
-    return {
-      symbol: quote.symbol,
-      name: quote.name,
-      exchange: quote.exchange,
-      price: quote.price,
-      change: quote.change,
-      changePercentage: quote.changesPercentage,
-      open: quote.open,
-      high: quote.dayHigh,
-      low: quote.dayLow,
-      previousClose: quote.previousClose,
-      yearHigh: quote.yearHigh,
-      yearLow: quote.yearLow,
-      volume: quote.volume,
-      avgVolume: quote.avgVolume,
-      pe: quote.pe,
-      marketCap: quote.marketCap,
-      eps: quote.eps
-    };
-  });
+  return {
+    data: rows,
+    totalCount,
+    currentPage: options.page,
+    pageCount: Math.ceil(totalCount / options.pageSize)
+  };
 };

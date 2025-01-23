@@ -40,6 +40,6 @@ router.post('/watchlists', authenticate, watchlistsController.createWatchlist);
 router.post('/watchlists/:id/symbols', authenticate, watchlistsController.addSymbolToWatchlist);
 // router.delete('/watchlists/:id/stocks/:symbol', authenticate, watchlistController);
 
-router.get('/screener', screenerController.getScreener);
+router.post('/screener', screenerController.filterScreener);
 
 export default router;
