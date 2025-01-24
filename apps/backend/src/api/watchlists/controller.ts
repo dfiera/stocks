@@ -39,3 +39,16 @@ export const addSymbolToWatchlist = async (req: Request, res: Response, next: Ne
   }
 };
 
+export const deleteSymbol = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const watchlistId = req.params.id;
+    const symbol = req.params.symbol;
+
+    await watchlistsService.deleteSymbol(watchlistId, symbol);
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+

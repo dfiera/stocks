@@ -1,4 +1,9 @@
-import { addSymbolToWatchlist, createWatchlistForUser, getUserWatchlists } from '../../db/queries.ts';
+import {
+  addSymbolToWatchlist,
+  createWatchlistForUser,
+  getUserWatchlists,
+  deleteSymbolFromWatchlist
+} from '../../db/queries.ts';
 import type { Watchlist } from './types.ts';
 import * as stocksService from '../stocks/service.ts';
 import type { PriceChart, Quote, Symbol } from '../stocks/types.ts';
@@ -46,4 +51,8 @@ export const getWatchlists = async (userId: string) => {
 
 export const addSymbol = async (watchlistId: string, symbol: string) => {
   return await addSymbolToWatchlist(watchlistId, symbol);
+};
+
+export const deleteSymbol = async (watchlistId: string, symbol: string) => {
+  await deleteSymbolFromWatchlist(watchlistId, symbol);
 };

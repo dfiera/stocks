@@ -38,7 +38,7 @@ router.post('/watchlists', authenticate, watchlistsController.createWatchlist);
 // router.put('/watchlists/:id', watchlistController);
 // router.delete('/watchlists/:id', watchlistController);
 router.post('/watchlists/:id/symbols', authenticate, watchlistsController.addSymbolToWatchlist);
-// router.delete('/watchlists/:id/stocks/:symbol', authenticate, watchlistController);
+router.delete('/watchlists/:id/symbols/:symbol', authenticate, watchlistsController.deleteSymbol);
 
 router.post('/screener', screenerController.filterScreener);
 

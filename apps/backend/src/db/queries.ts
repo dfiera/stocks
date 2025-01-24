@@ -239,3 +239,27 @@ export const getFilteredSymbolRows = async (search: string, limit: number) => {
     throw error;
   }
 };
+
+export const deleteSymbolFromWatchlist = async (watchlistId: string, symbol: string) => {
+  try {
+    const [result] = await sql<[{ id: string }]>`
+      SELECT id
+      FROM symbols
+      WHERE symbol = ${symbol}
+    `;
+
+    if (!result) {
+      throw new Error(`Symbol ${symbol} not found in symbols table.`);
+    }
+
+    const symbolId = result.id;
+
+    await sql`
+      DELETE FROM watchlist_symbols
+      WHERE watchlist_id = ${watchlistId} AND symbol_id = ${symbolId}
+    `;
+  } catch (error) {
+    console.error('deleteSymbolFromWatchlist query error', error);
+    throw error;
+  }
+};
