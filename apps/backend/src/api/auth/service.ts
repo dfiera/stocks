@@ -2,6 +2,7 @@ import { promisify } from 'node:util';
 import crypto from 'node:crypto';
 import { findUserByEmail, storeUserCredentials } from '../../db/queries.ts';
 import logger from '../../utils/logger.ts';
+import * as watchlistService from '../watchlists/service.ts';
 
 const randomBytesAsync = promisify(crypto.randomBytes);
 const scryptAsync: (arg1: crypto.BinaryLike, arg2: crypto.BinaryLike, arg3: number) => Promise<Buffer> = promisify(crypto.scrypt);
@@ -45,10 +46,12 @@ const compare = async (password: string, encodedKey: string) => {
   }
 };
 
-export const storeCredentials = async (email: string, password: string) => {
+export const createUser = async (email: string, password: string) => {
   const hashedPassword = await hashPassword(password);
 
-  await storeUserCredentials(email, hashedPassword);
+  const userId = await storeUserCredentials(email, hashedPassword);
+  // Create default watchlist after user creation
+  await watchlistService.createDefaultWatchlist(userId);
 };
 
 export const validateCredentials = async (email: string, password: string) => {

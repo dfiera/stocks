@@ -37,6 +37,13 @@ export const createWatchlist = async (userId: string, { name, description }: { n
   return await createWatchlistForUser(userId, name, description);
 };
 
+export const createDefaultWatchlist = async (userId: string) => {
+  const name = 'My Symbols';
+  const description = 'Default watchlist for tracking your favourite stocks.';
+
+  await createWatchlistForUser(userId, name, description);
+};
+
 export const getWatchlists = async (userId: string) => {
   const watchlists = await getUserWatchlists(userId);
 
