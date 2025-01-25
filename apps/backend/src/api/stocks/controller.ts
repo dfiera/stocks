@@ -18,7 +18,7 @@ export const getQuote = async (req: Request, res: Response, next: NextFunction) 
   try {
     const symbol = req.params['symbol'];
 
-    const data = await stocksService.getQuote(symbol);
+    const data = await stocksService.getRealtimeQuote(symbol);
 
     res.status(200).json(data);
   } catch (error) {

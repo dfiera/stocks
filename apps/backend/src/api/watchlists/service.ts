@@ -5,13 +5,13 @@ import {
   deleteSymbolFromWatchlist
 } from '../../db/queries.ts';
 import type { Watchlist } from './types.ts';
-import * as stocksService from '../stocks/service.ts';
 import type { PriceChart, Quote, Symbol } from '../stocks/types.ts';
+import * as stocksService from '../stocks/service.ts';
 
 const fetchPriceDataForWatchlist = async (watchlist: Watchlist<Symbol>): Promise<Watchlist> => {
   const promises: Promise<[Quote, PriceChart]>[] = watchlist.symbols
     .map(({ symbol }) => {
-      const quotePromise = stocksService.getQuote(symbol);
+      const quotePromise = stocksService.getRealtimeQuote(symbol);
       const priceChartPromise = stocksService.getPriceChart(symbol, { interval: '5min', outputSize: '78' });
 
       return Promise.all([quotePromise, priceChartPromise]);

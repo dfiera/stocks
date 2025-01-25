@@ -1,8 +1,7 @@
-import type { MarketMovers } from './types.ts';
-import * as stubs from './stubs.ts';
+import { redisClient } from '../../redis/redis.ts';
+import type { MarketContext, MarketMovers } from './types.ts';
 
 type MarketSentiment = 'extreme greed' | 'greed' | 'neutral' | 'fear' | 'extreme fear';
-type Region = 'America' | 'Americas' | 'Europe' | 'APAC' | 'Asia-Pacific' | 'EMEA';
 
 interface MarketsAPIResponse {
   name: string;
@@ -55,22 +54,6 @@ interface CurrencyRate {
   prettySymbol: string;
 }
 
-interface MarketMoversAPIResponse {
-  symbol: string;
-  name: string;
-  price: number;
-  change: number;
-  changesPercentage: number;
-}
-
-interface MarketNewsArticle {
-  title: string;
-  url: string;
-  time_published: string;
-  authors: string[];
-  summary: string;
-}
-
 const REGIONS = ['Americas', 'Asia-Pacific', 'Europe'];
 const FILTER_COUNTRIES = ['United States', 'Japan'];
 const FILTER_REGIONS = ['Europe'];
@@ -82,97 +65,208 @@ const getFormattedDate = () => {
     ('0' + (today.getMonth() + 1)).slice(-2),
     ('0' + today.getDate()).slice(-2)
   ].join('-');
+};
+
+interface MarketMoversAPIResponse {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changesPercentage: number;
 }
 
 const fetchMarketGainers = async (): Promise<MarketMovers[]> => {
-  // const response = await fetch(`https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${process.env.FMP_API_KEY}`);
-  //
-  // const marketGainers = await response.json() as MarketMoversAPIResponse[];
+  try {
+    const response = await fetch(`${process.env.FMP_API_URL}/stock_market/gainers?apikey=${process.env.FMP_API_KEY}`);
 
-  return stubs.gainers.map((value) => ({
-    symbol: value.symbol,
-    name: value.name,
-    price: value.price,
-    change: value.change,
-    changePercentage: value.changesPercentage
-  }));
-};
-
-const fetchMarketLosers = async (): Promise<MarketMovers[]> => {
-  // const response = await fetch(`https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${process.env.FMP_API_KEY}`);
-  // const marketLosers = await response.json() as MarketMoversAPIResponse[];
-
-  return stubs.losers.map((value) => ({
-    symbol: value.symbol,
-    name: value.name,
-    price: value.price,
-    change: value.change,
-    changePercentage: value.changesPercentage
-  }));
-};
-
-const fetchMarketMostActive = async (): Promise<MarketMovers[]> => {
-  // const response = await fetch(`https://financialmodelingprep.com/api/v3/stock_market/actives?apikey=${process.env.FMP_API_KEY}`);
-  // const mostActive = await response.json() as MarketMoversAPIResponse[];
-
-  return stubs.mostActive.map((value) => ({
-    symbol: value.symbol,
-    name: value.name,
-    price: value.price,
-    change: value.change,
-    changePercentage: value.changesPercentage
-  }));
-};
-
-const fetchSectorPerformance = async (): Promise<{ sector: string; changePercentage: number }[]> => {
-  // const response = await fetch(`https://financialmodelingprep.com/api/v3/sector-performance?apikey=${process.env.FMP_API_KEY}`);
-  // const sectorPerformance = await response.json() as { sector: string; changesPercentage: string }[];
-
-  return stubs.sectorPerformance.map((value) => ({
-    sector: value.sector,
-    changePercentage: parseFloat(value.changesPercentage)
-  }));
-};
-
-const fetchLatestMarketNews = async (): Promise<MarketNewsArticle[]> => {
-  const response = await fetch(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&topics=economy_monetary&apikey=${process.env.AV_API_KEY}`);
-  const json = await response.json() as { items: string; feed: MarketNewsArticle[] };
-
-  return json.feed;
-}
-
-const fetchMarketSentiment = async (): Promise<{ rating: MarketSentiment; score: number }> => {
-  const response = await fetch('https://production.dataviz.cnn.io/index/fearandgreed/current', {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market top gainers from API: ${response.statusText}`);
     }
-  });
-  const json = await response.json() as { score: number; rating: MarketSentiment; timestamp: string; previous_close: number };
 
-  return {
-    rating: json.rating,
-    score: json.score
+    const data = await response.json() as MarketMoversAPIResponse[];
+
+    return data.map((item) => ({
+      symbol: item.symbol,
+      name: item.name,
+      price: item.price,
+      change: item.change,
+      changePercentage: item.changesPercentage
+    }));
+  } catch (error) {
+    throw error;
   }
 };
 
-const fetchMarketIndices = async (): Promise<MarketIndex[]> => {
-  const regions = REGIONS.join(',');
-  const date = getFormattedDate();
+const fetchMarketLosers = async (): Promise<MarketMovers[]> => {
+  try {
+    const response = await fetch(`${process.env.FMP_API_URL}/stock_market/losers?apikey=${process.env.FMP_API_KEY}`);
 
-  const url = `https://production.dataviz.cnn.io/markets/world/regions/${regions}/${date}`;
-  const headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
-  };
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market top losers from API: ${response.statusText}`);
+    }
 
-  const response = await fetch(url, { headers });
-  const data = await response.json() as MarketIndexAPIResponse[];
+    const data = await response.json() as MarketMoversAPIResponse[];
 
-  const results = data.reduce((results, item) => {
-    const isFilteredCountry = FILTER_COUNTRIES.includes(item.country.name);
-    const isFilteredRegion = FILTER_REGIONS.includes(item.country.region);
+    return data.map((item) => ({
+      symbol: item.symbol,
+      name: item.name,
+      price: item.price,
+      change: item.change,
+      changePercentage: item.changesPercentage
+    }));
+  } catch (error) {
+    throw error;
+  }
+};
 
-    if (isFilteredCountry || isFilteredRegion) {
-      results.push({
+const fetchMarketMostActive = async (): Promise<MarketMovers[]> => {
+  try {
+    const response = await fetch(`${process.env.FMP_API_URL}/stock_market/actives?apikey=${process.env.FMP_API_KEY}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market most active from API: ${response.statusText}`);
+    }
+
+    const data = await response.json() as MarketMoversAPIResponse[];
+
+    return data.map((item) => ({
+      symbol: item.symbol,
+      name: item.name,
+      price: item.price,
+      change: item.change,
+      changePercentage: item.changesPercentage
+    }));
+  } catch (error) {
+    throw error;
+  }
+};
+
+const fetchSectorPerformance = async (): Promise<{ sector: string; changePercentage: number }[]> => {
+  try {
+    const response = await fetch(`${process.env.FMP_API_URL}/sector-performance?apikey=${process.env.FMP_API_KEY}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sector performance from API: ${response.statusText}`);
+    }
+
+    const data = await response.json() as { sector: string; changesPercentage: string }[];
+
+    return data.map((item) => ({
+      sector: item.sector,
+      changePercentage: parseFloat(item.changesPercentage)
+    }));
+  } catch (error) {
+    throw error;
+  }
+};
+
+interface MarketNewsArticle {
+  title: string;
+  url: string;
+  time_published: string;
+  authors: string[];
+  summary: string;
+}
+
+const fetchLatestMarketNews = async (): Promise<MarketNewsArticle[]> => {
+  try {
+    const response = await fetch(`${process.env.AV_API_URL}/query?function=NEWS_SENTIMENT&topics=economy_monetary&apikey=${process.env.AV_API_KEY}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch latest market news from API: ${response.statusText}`);
+    }
+
+    const json = await response.json() as { items: string; feed: MarketNewsArticle[] };
+
+    return json.feed;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const fetchMarketSentiment = async ({ userAgent }: MarketContext): Promise<{ rating: MarketSentiment; score: number }> => {
+  try {
+    const response = await fetch(`${process.env.MARKETS_DATA_API_URL}/index/fearandgreed/current`, {
+      headers: {
+        'User-Agent': userAgent
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market sentiment from API: ${response.statusText}`);
+    }
+
+    const json = await response.json() as { score: number; rating: MarketSentiment; timestamp: string; previous_close: number };
+
+    return {
+      rating: json.rating,
+      score: json.score
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+const fetchMarketIndices = async ({ userAgent }: MarketContext): Promise<MarketIndex[]> => {
+  try {
+    const regions = REGIONS.join(',');
+    const date = getFormattedDate();
+
+    const response = await fetch(`${process.env.MARKETS_DATA_API_URL}/markets/world/regions/${regions}/${date}`, {
+      headers: {
+        'User-Agent': userAgent
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market indices from API: ${response.statusText}`);
+    }
+
+    const data = await response.json() as MarketIndexAPIResponse[];
+
+    const results = data.reduce((results, item) => {
+      const isFilteredCountry = FILTER_COUNTRIES.includes(item.country.name);
+      const isFilteredRegion = FILTER_REGIONS.includes(item.country.region);
+
+      if (isFilteredCountry || isFilteredRegion) {
+        results.push({
+          name: item.name,
+          symbol: item.symbol,
+          price: item.current_price,
+          prevClosePrice: item.prev_close_price,
+          priceChange: item.price_change_from_prev_close,
+          percentChange: item.percent_change_from_prev_close,
+          prevCloseDate: item.prev_close_date,
+          lastUpdated: item.last_updated,
+          country: item.country
+        });
+      }
+
+      return results;
+    }, [] as MarketIndex[]);
+
+    return results.sort((a, b) => b.price - a.price);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const fetchCurrencies = async ({ userAgent }: MarketContext): Promise<CurrencyRate[]> => {
+  try {
+    const response = await fetch(`${process.env.MARKETS_DATA_API_URL}/markets/currency/summary`, {
+      headers: {
+        'User-Agent': userAgent
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch currencies from API: ${response.statusText}`);
+    }
+
+    const json = await response.json() as CurrencyAPIResponse[];
+
+    return json.map((item) => {
+      return {
         name: item.name,
         symbol: item.symbol,
         price: item.current_price,
@@ -181,94 +275,139 @@ const fetchMarketIndices = async (): Promise<MarketIndex[]> => {
         percentChange: item.percent_change_from_prev_close,
         prevCloseDate: item.prev_close_date,
         lastUpdated: item.last_updated,
-        country: item.country
-      });
+        prettySymbol: item.pretty_symbol
+      };
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const fetchCryptocurrencies = async ({ userAgent }: MarketContext): Promise<CurrencyRate[]> => {
+  try {
+    const response = await fetch(`${process.env.MARKETS_DATA_API_URL}/markets/crypto/summary`, {
+      headers: {
+        'User-Agent': userAgent
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cryptocurrencies from API: ${response.statusText}`);
     }
 
-    return results;
-  }, [] as MarketIndex[]);
+    const json = await response.json() as CurrencyAPIResponse[];
 
-  return results.sort((a, b) => b.price - a.price);
+    return json.map((item) => {
+      return {
+        name: item.name,
+        symbol: item.symbol,
+        price: item.current_price,
+        prevClosePrice: item.prev_close_price,
+        priceChange: item.price_change_from_prev_close,
+        percentChange: item.percent_change_from_prev_close,
+        prevCloseDate: item.prev_close_date,
+        lastUpdated: item.last_updated,
+        prettySymbol: item.pretty_symbol
+      };
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
-const fetchCurrencies = async (): Promise<CurrencyRate[]> => {
-  const response = await fetch(`https://production.dataviz.cnn.io/markets/currency/summary`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+export const getTopGainers = async (): Promise<MarketMovers[]> => {
+  try {
+    const cacheKey = 'markets:topGainers';
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
     }
-  });
-  const json = await response.json() as CurrencyAPIResponse[];
 
-  return json.map((item) => {
-    return {
-      name: item.name,
-      symbol: item.symbol,
-      price: item.current_price,
-      prevClosePrice: item.prev_close_price,
-      priceChange: item.price_change_from_prev_close,
-      percentChange: item.percent_change_from_prev_close,
-      prevCloseDate: item.prev_close_date,
-      lastUpdated: item.last_updated,
-      prettySymbol: item.pretty_symbol
-    };
-  });
+    const data = await fetchMarketGainers();
+
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-const fetchCryptocurrencies = async (): Promise<CurrencyRate[]> => {
-  const response = await fetch(`https://production.dataviz.cnn.io/markets/crypto/summary`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+export const getTopLosers = async (): Promise<MarketMovers[]> => {
+  try {
+    const cacheKey = 'markets:topLosers';
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
     }
-  });
-  const json = await response.json() as CurrencyAPIResponse[];
 
-  return json.map((item) => {
-    return {
-      name: item.name,
-      symbol: item.symbol,
-      price: item.current_price,
-      prevClosePrice: item.prev_close_price,
-      priceChange: item.price_change_from_prev_close,
-      percentChange: item.percent_change_from_prev_close,
-      prevCloseDate: item.prev_close_date,
-      lastUpdated: item.last_updated,
-      prettySymbol: item.pretty_symbol
-    };
-  });
+    const data = await fetchMarketLosers();
+
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const getTopGainers = async () => {
-  return await fetchMarketGainers();
+export const getMostActive = async (): Promise<MarketMovers[]> => {
+  try {
+    const cacheKey = 'markets:mostActive';
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
+    const data = await fetchMarketMostActive();
+
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const getTopLosers = async () => {
-  return await fetchMarketLosers();
+export const getSectorPerformance = async (): Promise<{ sector: string; changePercentage: number }[]> => {
+  try {
+    const cacheKey = 'markets:sectorPerformance';
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+
+    const data = await fetchSectorPerformance();
+
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const getMostActive = async () => {
-  return await fetchMarketMostActive();
-};
+export const getMarketSentiment = async (context: MarketContext) => {
+  const [marketSentiment, marketNews] = await Promise.all([fetchMarketSentiment(context), fetchLatestMarketNews()]);
 
-export const getSectorPerformance = async () => {
-  return await fetchSectorPerformance();
-};
-
-export const getMarketSentiment = async () => {
-  // const [marketSentiment, marketNews] = await Promise.all([fetchMarketSentiment(), fetchLatestMarketNews()]);
   return {
-    marketSentiment: stubs.marketSentiment,
-    marketNews: stubs.marketNews
+    marketSentiment,
+    marketNews
   };
 };
 
-export const getMarketIndices = async () => {
-  return await fetchMarketIndices();
+export const getMarketIndices = async (context: MarketContext) => {
+  return await fetchMarketIndices(context);
 };
 
-export const getCurrencies = async () => {
-  return await fetchCurrencies();
+export const getCurrencies = async (context: MarketContext) => {
+  return await fetchCurrencies(context);
 };
 
-export const getCryptocurrencies = async () => {
-  return await fetchCryptocurrencies();
+export const getCryptocurrencies = async (context: MarketContext) => {
+  return await fetchCryptocurrencies(context);
 };

@@ -6,7 +6,7 @@ export interface Symbol {
   type: string;
 }
 
-export interface MetaObject {
+export interface CandlestickMetadata {
   symbol: string;
   interval: string;
   currency: string;
@@ -16,7 +16,7 @@ export interface MetaObject {
   type: string;
 }
 
-export interface OHLCPrice {
+export interface CandlestickChart {
   datetime: string;
   open: string;
   high: string;
@@ -26,8 +26,8 @@ export interface OHLCPrice {
 }
 
 export interface PriceChart {
-  meta: MetaObject;
-  values: OHLCPrice[]
+  meta: CandlestickMetadata;
+  values: CandlestickChart[]
 }
 
 export interface CompanyProfile {

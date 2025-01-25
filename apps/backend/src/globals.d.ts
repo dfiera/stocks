@@ -9,9 +9,16 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       PORT: number;
+      MARKETS_DATA_API_URL: string;
+      FMP_API_URL: string;
       FMP_API_KEY: string;
+      AV_API_URL: string;
+      AV_API_KEY: string;
+      TD_API_URL: string;
       TD_API_KEY: string;
+      POLYGON_API_URL: string;
       POLYGON_API_KEY: string;
+      FINNHUB_API_URL: string;
       FINNHUB_API_KEY: string;
       STOCK_API_URL: string;
       POLL_INTERVAL: number;

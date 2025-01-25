@@ -5,3 +5,7 @@ export interface MarketMovers {
   change: number;
   changePercentage: number;
 }
+
+export interface MarketContext {
+  userAgent: string;
+}
