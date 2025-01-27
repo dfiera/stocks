@@ -184,6 +184,25 @@ const fetchLatestMarketNews = async (): Promise<MarketNewsArticle[]> => {
   }
 }
 
+const getLatestMarketNewsWithCache = async (): Promise<MarketNewsArticle[]> => {
+  try {
+    const cacheKey = 'market:news:latest';
+
+    const cachedNews = await redisClient.get(cacheKey);
+    if (cachedNews) {
+      return JSON.parse(cachedNews);
+    }
+
+    const newsData = await fetchLatestMarketNews();
+
+    await redisClient.set(cacheKey, JSON.stringify(newsData), 'EX', 7200);
+
+    return newsData;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const fetchMarketSentiment = async ({ userAgent }: MarketContext): Promise<{ rating: MarketSentiment; score: number }> => {
   try {
     const response = await fetch(`${process.env.MARKETS_DATA_API_URL}/index/fearandgreed/current`, {
@@ -326,7 +345,7 @@ export const getTopGainers = async (): Promise<MarketMovers[]> => {
 
     const data = await fetchMarketGainers();
 
-    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 3600);
 
     return data;
   } catch (error) {
@@ -345,7 +364,7 @@ export const getTopLosers = async (): Promise<MarketMovers[]> => {
 
     const data = await fetchMarketLosers();
 
-    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 3600);
 
     return data;
   } catch (error) {
@@ -364,7 +383,7 @@ export const getMostActive = async (): Promise<MarketMovers[]> => {
 
     const data = await fetchMarketMostActive();
 
-    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 3600);
 
     return data;
   } catch (error) {
@@ -383,7 +402,7 @@ export const getSectorPerformance = async (): Promise<{ sector: string; changePe
 
     const data = await fetchSectorPerformance();
 
-    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 86400);
+    await redisClient.set(cacheKey, JSON.stringify(data), 'EX', 3600);
 
     return data;
   } catch (error) {
@@ -392,7 +411,10 @@ export const getSectorPerformance = async (): Promise<{ sector: string; changePe
 };
 
 export const getMarketSentiment = async (context: MarketContext) => {
-  const [marketSentiment, marketNews] = await Promise.all([fetchMarketSentiment(context), fetchLatestMarketNews()]);
+  const [marketSentiment, marketNews] = await Promise.all([
+    fetchMarketSentiment(context),
+    getLatestMarketNewsWithCache()
+  ]);
 
   return {
     marketSentiment,
