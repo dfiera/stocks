@@ -1,21 +1,33 @@
 # Stocks (WIP)
+**A stock tracking app with an advanced screener for analysing market data and stocks. Users can monitor trends, filter stocks by specific criteria and manage their watchlists.**
 
-A stocks application that enables users to track their personal stock portfolios, manage watchlists, and analyse market data effectively.
+![Stocks | Markets Overview](docs/screenshots/Markets_Overview.png)
 
-The markets view enables users to gauge overall market sentiment and monitor the performance of different sectors. They can also create and manage their personal watchlists, adding or removing stocks of interest.
+## Markets Overview
+The _Markets_ view allows users to track overall market sentiment and follow the performance of different sectors. They can create and update personalised watchlists, adding or removing stocks of interest.
 
-Selecting a stock opens a detailed view with in-depth information about the stock and company behind it, including:
+![Stocks | Markets Overview](docs/screenshots/Markets_Overview_Logged_In.png)
+
+## Search
+Users can search for symbols or company names to quickly find relevant stocks, adding or removing symbols from a watchlist.
+
+![Stocks | Markets Overview](docs/screenshots/Stocks_Search.png)
+
+## Stock Details
+Selecting a stock opens a detailed view with in-depth information, including:
 
 - Company details: name, industry, sector, website, description, etc.
 - Stock metrics: real-time quote (price, change, open, high, low, close), volume, P/E ratio, market cap, yield, beta, EPS, etc.
-- Price chart displaying intra-day and historical price movements.
-- Company-specific news and events.
+- Price chart: displaying both intra-day and historical price movements.
+- Company news and events: relevant updates impacting the stock.
 
-The screener enables users to search, sort and filter stocks to find those that fit their own search criteria, like trading volume, market capitalisation, P/E ratio, etc.
-This feature also highlights market top gainers and losers for quick insights.
+![Stocks | Markets Overview](docs/screenshots/Watchlist_Symbol_Details.png)
+![Stocks | Markets Overview](docs/screenshots/Stock_Negative_Price_Movement.png)
 
-The application consists of a React + Vite frontend and a Node.js + Express server.
+## Screener
+The _Screener_ enables users to search, sort and filter stocks based on criteria like trading volume, market capitalisation, P/E ratio, sector, etc., returning paginated results for efficient browsing.
 
-On the frontend, I use TailwindCSS for styling, TanStack Router for client-side navigation, TanStack Query for server state management and Socket.IO for real-time updates.
+![Stocks | Markets Overview](docs/screenshots/Stocks_Screener.png)
 
-The Express API exposes useful endpoints for managing watchlists, accessing stock screeners, retrieving company profiles, generating price charts, and fetching news. Socket.IO, Redis and PostgreSQL enable real-time bidirectional event-based communication between the client and the server.
+## Tech Stack
+Built with React, Vite and Tailwind CSS on the front end, and powered by Node.js, PostgreSQL, Socket.IO and Redis on the backend for real-time updates. Deployed on AWS.
