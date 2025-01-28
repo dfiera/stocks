@@ -4,12 +4,12 @@
 ![Stocks | Markets Overview](docs/screenshots/Markets_Overview.png)
 
 ## Markets Overview
-The _Markets_ view allows users to track overall market sentiment and follow the performance of different sectors. They can create and update personalised watchlists, adding or removing stocks of interest.
+The _Markets_ view allows users to track overall market sentiment and follow the performance of stocks and different sectors. They can create and update personalised watchlists, adding or removing stocks of interest.
 
 ![Stocks | Markets Overview](docs/screenshots/Markets_Overview_Logged_In.png)
 
 ## Search
-Users can search for symbols or company names to quickly find relevant stocks, adding or removing symbols from a watchlist.
+Users can search for symbols or company names to quickly find relevant stocks, and easily add or remove them from their watchlists.
 
 ![Stocks | Markets Overview](docs/screenshots/Stocks_Search.png)
 
