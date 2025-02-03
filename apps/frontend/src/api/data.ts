@@ -324,3 +324,70 @@ export const fetchWatchlists = async (): Promise<Watchlist[]> => {
     return [];
   }
 };
+
+export const createWatchlist = async ({ name, description }: { name: string; description: string }): Promise<Watchlist> => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/watchlists`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description }),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create watchlist. Response status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return {
+      id: '',
+      name: '',
+      description: '',
+      symbols: []
+    };
+  }
+};
+
+export const addSymbolToWatchlist = async ({ watchlistId, symbol }: { watchlistId: string; symbol: string }): Promise<Watchlist> => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/watchlists/${watchlistId}/symbols`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol }),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add symbol to watchlist. Response status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error((error as Error).message);
+
+    return {
+      id: '',
+      name: '',
+      description: '',
+      symbols: []
+    };
+  }
+};
+
+export const removeSymbolFromWatchlist = async ({ watchlistId, symbol }: { watchlistId: string; symbol: string }) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/watchlists/${watchlistId}/symbols/${symbol}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to remove symbol from watchlist. Response status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error((error as Error).message);
+  }
+};
