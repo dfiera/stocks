@@ -8,8 +8,10 @@ export const Route = createFileRoute('/_layout')({
 function LayoutComponent() {
   return (
     <>
-      <Navigation/>
-      <Outlet />
+      <Navigation />
+      <div className="p-6 xl:px-0">
+        <Outlet />
+      </div>
     </>
   );
 }

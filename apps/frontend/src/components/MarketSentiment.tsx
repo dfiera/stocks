@@ -22,15 +22,17 @@ const getSentimentColour = (sentiment: string) => {
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
+  return `${text.slice(0, maxLength).trimEnd()}...`;
 };
 
 export default function MarketSentiment() {
   const { data } = useSuspenseQuery(marketSentimentQueryOptions);
   const { marketSentiment, marketNews } = data;
   const { rating } = marketSentiment;
+
   const latestNewsArticle = marketNews[Math.floor(Math.random() * marketNews.length)];
-  const [textColour, bgColour] = getSentimentColour(rating);
+  const [textColour, bgColour] = getSentimentColour(marketSentiment.rating);
+  const sentiment = `${rating}${rating === MARKET_SENTIMENT.neutral ? ' sentiment' : ''}`;
 
   return (
     <>
@@ -38,10 +40,10 @@ export default function MarketSentiment() {
         <div className="h-full flex flex-col justify-between relative z-10 text-gray-900 dark:text-gray-50">
           <div>
             <h1 className={cx(
-              "text-2xl font-bold capitalize leading-none tracking-tight",
+              "text-2xl font-bold first-letter:capitalize leading-none tracking-tight",
               `${textColour}`
             )}>
-              {rating}
+              {sentiment}
             </h1>
             <h2 className="mt-0.5 text-base font-medium tracking-tight">
               is driving the US market
@@ -52,7 +54,7 @@ export default function MarketSentiment() {
               What you need to know today
             </p>
             <a href={latestNewsArticle.url} className="inline-block mt-1.5 text-sm font-medium dark:hover:text-neutral-200 group transition-all ease-in-out duration-200">
-              {truncateText(latestNewsArticle.title, 72)}
+              {truncateText(latestNewsArticle.title, 85)}
               <LinkDecorator />
             </a>
           </div>
@@ -62,5 +64,5 @@ export default function MarketSentiment() {
         />
       </Card>
     </>
-  )
+  );
 }
