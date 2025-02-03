@@ -1,10 +1,12 @@
 import type {
+  Filter,
   LoginCredentials,
-  MarketMovers,
+  MarketMoversItem,
   NewsArticle,
   PriceChart,
   Quote,
   SearchResult,
+  StockScreener,
   Watchlist
 } from '../types.ts';
 
@@ -78,7 +80,7 @@ export const logout = async () => {
   }
 };
 
-// Search
+// SymbolSearch
 export const fetchFilteredSymbols = async ({ queryKey }: { queryKey: [string, { search: string }] }): Promise<SearchResult[]> => {
   const [_key, { search }] = queryKey;
 
@@ -109,7 +111,7 @@ export const fetchFilteredSymbols = async ({ queryKey }: { queryKey: [string, { 
 
 // Market data
 
-export const fetchMarketMovers = async ({ queryKey }: { queryKey: [string, string, string] }): Promise<MarketMovers[]> => {
+export const fetchMarketMovers = async ({ queryKey }: { queryKey: [string, string, string] }): Promise<MarketMoversItem[]> => {
   const [_key, __key, category] = queryKey;
 
   try {
@@ -197,21 +199,35 @@ export const fetchMarketSentiment = async (): Promise<{
   }
 };
 
-export const fetchScreenerData = async () => {
+// Screener
+export const fetchFilteredScreener = async ({ queryKey }: { queryKey: [string, { filters: Filter[]; search: string; page: number; pageSize: number }] }): Promise<{ data: StockScreener[]; totalCount: number; pageCount: number }> => {
+  const [_key, { filters, search, page, pageSize }] = queryKey;
+
   try {
     const response = await fetch('http://localhost:3000/api/screener', {
-      method: 'GET',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filters, search, page, pageSize }),
       credentials: 'include'
     });
+
     if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+      throw new Error(`Failed to apply screener filters: ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
     console.error((error as Error).message);
+
+    return {
+      data: [],
+      totalCount: 0,
+      pageCount: 0
+    };
   }
 };
+
+// Stock data
 
 export const fetchStockInfo = async ({ queryKey }: { queryKey: [string, string] }) => {
   const [_key, symbol] = queryKey;

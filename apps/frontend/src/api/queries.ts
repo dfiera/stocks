@@ -1,4 +1,5 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query';
+import type { Filter } from '../types.ts';
 import * as api from './data.ts';
 
 export const checkAuthQueryOptions = queryOptions({
@@ -22,7 +23,8 @@ export const symbolsQueryOptions = (search: string) => queryOptions({
 export const watchlistQueryOptions = queryOptions({
   queryKey: ['watchlist'],
   queryFn: api.fetchWatchlists,
-  refetchOnWindowFocus: false
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
 
 export const marketMoversQueryOptions = (category: string) => queryOptions({
@@ -53,32 +55,38 @@ export const marketSentimentQueryOptions = queryOptions({
   staleTime: Infinity
 });
 
-export const screenerQueryOptions = queryOptions({
-  queryKey: ['screener'],
-  queryFn: api.fetchScreenerData,
-  refetchOnWindowFocus: false
+export const screenerQueryOptions = ({ filters, search, page, pageSize }: { filters: Filter[]; search: string; page: number; pageSize: number }) => queryOptions({
+  queryKey: ['screener', { filters, search, page, pageSize }],
+  queryFn: api.fetchFilteredScreener,
+  placeholderData: keepPreviousData,
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
 
 export const stockQueryOptions = (symbol: string) => queryOptions({
   queryKey: ['stock', symbol],
   queryFn: api.fetchStockInfo,
-  refetchOnWindowFocus: false
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
 
 export const quoteQueryOptions = (symbol: string) => queryOptions({
   queryKey: ['stock', 'quote', symbol],
   queryFn: api.fetchStockQuote,
-  refetchOnWindowFocus: false
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
 
 export const priceChartQueryOptions = (symbol: string) => queryOptions({
   queryKey: ['priceChart', symbol],
   queryFn: api.fetchPriceChart,
-  refetchOnWindowFocus: false
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
 
 export const stockNewsQueryOptions = (symbol: string) => queryOptions({
   queryKey: ['news', symbol],
   queryFn: api.fetchStockNews,
-  refetchOnWindowFocus: false
+  refetchOnWindowFocus: false,
+  staleTime: Infinity
 });
