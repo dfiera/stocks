@@ -42,6 +42,7 @@ export interface CompanyProfile {
   employees: string;
   website: string;
   beta: number;
+  dividendYield: number;
 }
 
 export interface Quote {

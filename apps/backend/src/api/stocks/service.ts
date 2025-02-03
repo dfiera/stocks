@@ -26,15 +26,16 @@ const fetchAvailableSymbols = async (): Promise<Symbol[]> => {
 
 interface CompanyProfileAPIResponse {
   symbol: string;
-  companyName: string;
-  description: string;
-  currency: string;
-  mktCap: number;
-  volAvg: number;
   beta: number;
+  volAvg: number;
+  mktCap: number;
+  lastDiv: number;
+  companyName: string;
+  currency: string;
   exchangeShortName: string;
   industry: string;
   website: string;
+  description: string;
   sector: string;
   country: string;
   fullTimeEmployees: string;
@@ -62,7 +63,8 @@ const fetchCompanyProfile = async (symbol: string): Promise<CompanyProfile> => {
       country: companyProfile.country,
       employees: companyProfile.fullTimeEmployees,
       website: companyProfile.website,
-      beta: companyProfile.beta
+      beta: companyProfile.beta,
+      dividendYield: companyProfile.lastDiv
     };
   } catch (error) {
     throw error;
@@ -186,6 +188,19 @@ interface NewsArticleAPIResponse {
   description: string;
 }
 
+const getRelativeTime = (utcDate: Date) => {
+  const now = new Date();
+  const diffInMilliseconds = now.getTime() - utcDate.getTime();
+  const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+
+  if (diffInHours >= 24) {
+    const days = Math.floor(diffInHours / 24);
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  }
+
+  return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+}
+
 const fetchCompanyNews = async (symbol: string): Promise<NewsArticle[]> => {
   try {
     const response = await fetch(`${process.env.POLYGON_API_URL}/reference/news?ticker=${symbol}&order=desc&limit=10&sort=published_utc&apiKey=${process.env.POLYGON_API_KEY}`);
@@ -205,7 +220,7 @@ const fetchCompanyNews = async (symbol: string): Promise<NewsArticle[]> => {
         },
         title: newsArticle.title,
         author: newsArticle.author,
-        publishedUtc: newsArticle.published_utc,
+        publishedUtc: getRelativeTime(new Date(newsArticle.published_utc)),
         articleUrl: newsArticle.article_url,
         imageUrl: newsArticle.image_url,
         description: newsArticle.description
