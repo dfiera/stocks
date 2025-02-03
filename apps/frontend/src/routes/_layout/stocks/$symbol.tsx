@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 import {
   stockQueryOptions,
   quoteQueryOptions,
   priceChartQueryOptions,
   stockNewsQueryOptions,
-} from '../../../api/queries.ts'
-import Stock from '../../../components/Stock.tsx'
+} from '../../../api/queries.ts';
+import Stock from '../../../components/Stock.tsx';
 
 export const Route = createFileRoute('/_layout/stocks/$symbol')({
   beforeLoad: () => {
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_layout/stocks/$symbol')({
       quoteQueryOptions,
       priceChartQueryOptions,
       stockNewsQueryOptions,
-    }
+    };
   },
   loader: ({
     context: {
@@ -26,10 +26,18 @@ export const Route = createFileRoute('/_layout/stocks/$symbol')({
     },
     params: { symbol },
   }) => {
-    queryClient.prefetchQuery(stockQueryOptions(symbol))
-    queryClient.prefetchQuery(quoteQueryOptions(symbol))
-    queryClient.prefetchQuery(priceChartQueryOptions(symbol))
-    queryClient.prefetchQuery(stockNewsQueryOptions(symbol))
+    queryClient.ensureQueryData(stockQueryOptions(symbol));
+    queryClient.ensureQueryData(quoteQueryOptions(symbol));
+    queryClient.ensureQueryData(priceChartQueryOptions(symbol));
+    queryClient.ensureQueryData(stockNewsQueryOptions(symbol));
   },
-  component: Stock,
+  component: StockComponent
 })
+
+function StockComponent() {
+  const { symbol } = Route.useParams();
+
+  return (
+    <Stock symbol={symbol} />
+  );
+}

@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
-import { useParams, useRouteContext } from '@tanstack/react-router';
 import { useSuspenseQueries } from '@tanstack/react-query';
+import {
+  priceChartQueryOptions,
+  quoteQueryOptions,
+  stockNewsQueryOptions,
+  stockQueryOptions
+} from '../api/queries.ts';
 import { useQuoteSubscription } from '../hooks/useQuoteSubscription.ts';
 import type { Quote, CompanyOverview, NewsArticle } from '../types.ts';
 import { cx } from '../lib/utils.ts';
@@ -24,7 +29,7 @@ const symbolInfo = [
     label: '52W High'
   },
   {
-    value: 'yield',
+    value: 'dividendYieldd',
     label: 'Yield'
   },
   {
@@ -61,14 +66,7 @@ const symbolInfo = [
   }
 ]
 
-export default function Stock() {
-  const { symbol } = useParams({ from: '/_layout/stocks/$symbol' });
-  const {
-    stockQueryOptions,
-    quoteQueryOptions,
-    priceChartQueryOptions,
-    stockNewsQueryOptions
-  } = useRouteContext({ from: '/_layout/stocks/$symbol' });
+export default function Stock({ symbol }: { symbol: string }) {
   const [
     { data: stockData },
     { data: quote },
@@ -112,7 +110,7 @@ export default function Stock() {
             </span>
               <span className={cx(
                 'text-sm sm:text-base font-medium',
-                `${(quote.change > 0) ? 'dark:text-emerald-500' : 'dark:text-red-500'}`
+                `${(quote.change > 0) ? 'dark:text-emerald-400' : 'dark:text-red-400'}`
               )}>
               {quote.change > 0 ? '+' : ''}{quote.change.toFixed(2)} {`(${quote.changePercentage > 0 ? '+' : ''}${quote.changePercentage.toFixed(2)}%)`}
             </span>
@@ -159,7 +157,7 @@ export default function Stock() {
               <div key={id++} className="flex justify-between">
                 <span className="dark:text-gray-500">{item.label}</span>
                 <span
-                  className="">{quote[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString()}</span>
+                  className="">{quote[item.value as keyof Quote]?.toLocaleString() || stockData[item.value as keyof CompanyOverview]?.toLocaleString() || '-'}</span>
               </div>
             ))}
           </div>
@@ -208,8 +206,9 @@ export default function Stock() {
                   <div className="md:shrink-0">
                     <img
                       src={article.imageUrl}
-                      className="h-48 w-full object-cover md:h-full md:w-48"
+                      className="h-48 w-full object-cover md:h-full md:w-48 will-change-transform"
                       alt={article.description}
+                      loading="lazy"
                     />
                   </div>
                   <div className="p-6">

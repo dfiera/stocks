@@ -11,10 +11,10 @@ export const chartColors = {
     text: "text-blue-500",
   },
   emerald: {
-    bg: "bg-emerald-500",
-    stroke: "stroke-emerald-500",
-    fill: "fill-emerald-500",
-    text: "text-emerald-500",
+    bg: "bg-emerald-400",
+    stroke: "stroke-emerald-400",
+    fill: "fill-emerald-400",
+    text: "text-emerald-400",
   },
   violet: {
     bg: "bg-violet-500",
@@ -57,6 +57,12 @@ export const chartColors = {
     stroke: "stroke-fuchsia-500",
     fill: "fill-fuchsia-500",
     text: "text-fuchsia-500",
+  },
+  red: {
+    bg: "bg-red-400",
+    stroke: "stroke-red-400",
+    fill: "fill-red-400",
+    text: "text-red-400",
   },
 } as const satisfies {
   [color: string]: {
