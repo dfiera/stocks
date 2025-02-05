@@ -11,21 +11,21 @@ export default function ReadMore({ text, maxLength }: {
   };
 
   return (
-    <>
-      <p>
+    <div className="inline">
+      <span>
         {isExpanded
           ? text
           : getTruncatedText(text, maxLength)
         }
-      </p>
-      {text.length > length && (
+      </span>
+      {text.length > maxLength && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-blue-600 dark:text-blue-500 mt-0.5"
+          className="inline ml-1 text-blue-600 dark:text-blue-500"
         >
           {isExpanded ? 'Show less' : 'Show more'}
         </button>
       )}
-    </>
+    </div>
   );
 }
