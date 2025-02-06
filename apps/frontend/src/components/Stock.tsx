@@ -167,12 +167,12 @@ export default function Stock({ symbol }: { symbol: string }) {
               className="absolute z-0 h-full w-full bg-gradient-to-t from-neutral-50 via-neutral-200 to-neutral-50 blur-3xl transition-all duration-500 dark:from-gray-950 dark:via-slate-800/70 dark:to-gray-950"
             />
             <div
-              className="z-50 flex flex-col lg:flex-row justify-center gap-6 sm:gap-8"
+              className="z-10 flex flex-col lg:flex-row justify-center gap-6 sm:gap-8"
             >
-              <div className="z-50 max-w-2xl text-pretty font-medium text-sm">
+              <div className="z-10 max-w-2xl text-pretty font-medium text-sm">
                 <ReadMore text={stockData.description ?? ''} maxLength={500}/>
               </div>
-              <div className="z-50 min-w-fit text-pretty font-medium text-sm text-gray-500">
+              <div className="z-10 min-w-fit text-pretty font-medium text-sm text-gray-500">
                 <div>
                   Sector: <span className="text-white">{stockData.sector}</span>
                 </div>
@@ -202,11 +202,11 @@ export default function Stock({ symbol }: { symbol: string }) {
           <div className="mt-8 sm:mt-16 grid grid-cols-1 xl:grid-cols-2 gap-4">
             {newsArticles.map((article: NewsArticle) => (
               <Card key={article.id} className="max-w-md mx-auto rounded-xl shadow-md overflow-hidden md:max-w-2xl hover:shadow-lg transition-shadow p-0">
-                <div className="md:flex">
-                  <div className="md:shrink-0">
+                <div className="md:flex h-full">
+                  <div className="h-48 md:shrink-0 md:h-auto md:w-48">
                     <img
                       src={article.imageUrl}
-                      className="h-48 w-full object-cover md:h-full md:w-48 will-change-transform"
+                      className="h-full w-full object-cover will-change-transform"
                       alt={article.description}
                       loading="lazy"
                     />

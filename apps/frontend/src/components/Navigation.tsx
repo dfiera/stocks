@@ -75,11 +75,12 @@ export default function Navigation() {
   return (
     <div className={cx(
       "sticky top-0 h-16 z-50 transition-all duration-300",
-      isScrolled && "lg:pt-4"
+      isScrolled && "xl:pt-4"
     )}>
       <TabNavigation className={cx(
-        "h-16 max-w-4/5 mx-auto px-8 justify-end gap-8 transition-all duration-300",
-        isScrolled && "bg-gray-50/75 dark:bg-gray-900/75 shadow-2xl shadow-black/25 backdrop-blur-sm lg:border lg:rounded-xl"
+        "h-16 max-w-4/5 mx-auto px-8 justify-end gap-8 transition-all duration-300 ease-in-out",
+        "border dark:border-transparent border-b-gray-200 dark:border-b-gray-800",
+        isScrolled && "bg-gray-50/90 dark:bg-gray-900/90 shadow-2xl shadow-black/25 backdrop-blur-md xl:border xl:border-gray-200 xl:dark:border-gray-800 xl:rounded-xl"
       )}>
         <CustomLink
           to="/markets"
@@ -113,7 +114,7 @@ export default function Navigation() {
             </Button>
           }
         />
-        <div className="h-8 lg:border-l border-inherit" />
+        <div className="h-8 lg:border-l border-gray-200 dark:border-gray-800" />
         {!isAuthenticated ? (
           <CustomLink
             to="/login"
