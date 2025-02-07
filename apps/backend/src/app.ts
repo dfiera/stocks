@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
@@ -9,6 +10,16 @@ import sessionRefresh from './middleware/sessionRefresh.ts';
 import errorHandler from './middleware/errorHandler.ts';
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  limit: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: 'draft-8',
+  legacyHeaders: false
+});
+
+app.use(limiter);
 
 app.use(express.json());
 
